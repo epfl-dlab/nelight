@@ -1,8 +1,6 @@
 from abc import abstractmethod
 from types import FunctionType
 import numpy as np
-from tqdm import tqdm
-
 
 class Scorer:
     def __init__(self, scorer, initial_sort_key=lambda x: int(x[1:])):
