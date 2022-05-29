@@ -1,6 +1,6 @@
 import numpy as np
 
-from utils import iter_gt, iter_data, load_json, load_pickle
+from data_utils import iter_gt, iter_data, load_json, load_pickle
 
 
 def precision_at_one(gt, scores, ignore_missing=False):
