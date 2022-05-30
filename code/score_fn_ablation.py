@@ -1,14 +1,12 @@
 from tqdm import tqdm
 from scoring.semantic import *
-from utils.data_utils import load_pickle, save_pickle, load_json
+from data_utils import load_pickle, save_pickle, load_json
 
 data = load_json('../data/Quotebank/data.json')
 
 cache = load_pickle('../caches/Quotebank/wikicache.pkl')
 alias_cache = load_pickle('../caches/Quotebank/wikicache_alias.pkl')
 
-features = ['D', 'P', 'S', 'S_A']
-norm = ['no normalization', 'lemmatization', 'stemming']
 
 iscorers = [
     #Single features
@@ -30,7 +28,7 @@ iscorers = [
     # S_A
     EntityContentSimilarityScorer('iscore', wiki_cache=alias_cache, props_to_avoid={'description', 'first_paragraph'}),
     EntityContentSimilarityScorer('iscore', lemmatize=True, wiki_cache=alias_cache, props_to_avoid={'description', 'first_paragraph'}),
-    EntityContentSimilarityScorer('iscore', stem=True,wiki_cache=alias_cache, props_to_avoid={'description', 'first_paragraph'}),
+    EntityContentSimilarityScorer('iscore', stem=True, wiki_cache=alias_cache, props_to_avoid={'description', 'first_paragraph'}),
 
     #Pairs
     # D + P
