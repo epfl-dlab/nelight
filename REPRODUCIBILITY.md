@@ -206,6 +206,57 @@ python3 scripts/run_eigenthemes.py --dataset both --variant both --reuse-raw
 
 ---
 
+## Wikipedia and Wikidata PageRank
+
+The paper’s popularity baselines **PRWP** and **PRWD** are PageRank scores
+stored on each entity in `entity_kb.pkl` as `pagerank` and `pagerank_wd`.
+The shipped caches already include them. To rebuild a KB from scratch you need
+the rank files below, then pass them into `cache_building/build_entity_kb.py`.
+
+### PRWP — Wikipedia PageRank (field `pagerank`)
+
+We used Andreas Thalhammer’s publicly released Wikipedia PageRank scores from
+**2021** ([danker releases](https://danker.s3.amazonaws.com/index.html),
+CC BY-SA 3.0). These are PageRank over the Wikipedia link graph, keyed by
+Wikidata id.
+
+A dump aligned with the paper’s Wikidata snapshot:
+
+```bash
+wget https://danker.s3.amazonaws.com/2021-11-15.allwiki.links.rank.bz2
+bunzip2 2021-11-15.allwiki.links.rank.bz2
+```
+
+Newer dated files on the same page work the same way if you do not need a 2021
+match.
+
+### PRWD — Wikidata PageRank (field `pagerank_wd`)
+
+We computed Wikidata PageRank ourselves with
+[danker](https://github.com/athalhammer/danker) (same tooling Thalhammer uses
+for the public Wikipedia ranks). Follow the danker README to build a link file
+from a Wikidata / Wikipedia dump and run PageRank; write a TSV of scores.
+
+### File format and attaching ranks
+
+Both rank files are TSV lines `qid_number<TAB>score` (no leading `Q`),
+optionally with a header line. Example: `42	0.00031`.
+
+```bash
+python cache_building/build_entity_kb.py \
+  --dump /path/to/wikidata_subgraph_or_dump.json.gz \
+  --labels-dir /path/to/entity_metadata \
+  --qids /path/to/candidate_qids.pkl \
+  --wp-ranks /path/to/2021-11-15.allwiki.links.rank \
+  --wd-ranks /path/to/wikidata.ranks \
+  --out caches/quotebank/entity_kb.pkl
+```
+
+`--wp-ranks` fills `pagerank` (PRWP); `--wd-ranks` fills `pagerank_wd` (PRWD).
+See `cache_building/README.md` for the full KB pipeline.
+
+---
+
 ## Scoring rules (short)
 
 **Quotebank.** After the method score, break ties with a popularity feature, then
