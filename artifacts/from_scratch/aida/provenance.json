@@ -1,0 +1,18 @@
+{
+  "CSE": "score_cache/raw/AIDA/cse_scores.pkl (AIDA embedding caches not in Drive dump; scores validated vs Table 2)",
+  "NCSE": "score_cache/raw/AIDA/ncse_scores.pkl (raw cosines; asa[13] is ranked not raw)",
+  "CSSVE": "score_cache/raw/AIDA/cssve_scores.pkl",
+  "UCSE": "0.5*(NCSE+1)+Laplacian(CSSVE), weights (0,1,1)",
+  "Eigen": "aida_scores_all[0]; deepwalk embeddings pending for true recompute",
+  "Eigen (IScore)": "aida_scores_all[14]",
+  "mGENRE": "artifacts from genre_context_scores / convert_mgenre_raw",
+  "heuristics": "recomputed from aida_wikicache_ultimate.pkl + aida_unamb.pkl (no popularity TB)",
+  "Eigen_live": {
+    "source": "workspace/eigenthemes unsupervised_el weigen + deepwalk_wikidata.pickle",
+    "aida_overall_native_eval": 0.617,
+    "paper_aida_overall": 0.617,
+    "qb_overall_native_eval": 0.861,
+    "paper_qb_overall": 0.865,
+    "note": "Native Eigenthemes difficulty splits differ from NELight NS easy/hard; overall matches. Table-2 FS artifacts use paper dumps (TB applied for QB)."
+  }
+}
