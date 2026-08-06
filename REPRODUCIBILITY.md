@@ -10,8 +10,7 @@ bash scripts/reproduce_all.sh
 python3 scripts/reproduce_all_paper_tables.py
 ```
 
-Writes `artifacts/all_paper_tables.json` (Tables 1–11). Needs `numpy` / `scipy`
-and the shipped `score_cache/`, `scores/`, `caches/`, and `data/` trees.
+Writes `artifacts/all_paper_tables.json` (Tables 1–11). Needs `numpy` / `scipy` and the shipped `score_cache/`, `scores/`, `caches/`, and `data/` trees.
 
 From-scratch heuristics (entity KB + optional BART caches):
 
@@ -34,23 +33,8 @@ These are **print/dump mismatches**, not method bugs. Scripts treat the
 | Table 8 / 11 AIDA mGENRE MRR | 0.720 / 0.730 (hard/overall) | **0.743 / 0.736** | P@1 matches; printed MRR undercounts the dumps |
 | Table 9 UIScore+PRWP | 0.942 | **0.943** | Same as Table 2 UIScore overall |
 
-Also checked but not “errors”: Table 4 categories are qualitative (error **count** 14 matches); Table 5 is paper annotation arithmetic; Table 10 is paper hardware (reported as-is).
-
-## Protocol (summary)
-
-**Quotebank** — method-specific popularity tie-break → LQID (`NP→LQID` for IScore;
-`PRWP→LQID` for EEIScore/UIScore; `NS→LQID` otherwise).  
-**UIScore** = IScore+NIScore+EEIScore `(1,1,1)`.  
-**UCSE** claim (0.882): CSE←½(x+1), NCSE←Laplacian, CSSVE←Laplacian, w=`(0.45,0.9,0.2)`.
-
-**AIDA** — raw scores, numpy `argmax`, no popularity TB.  
-**UIScore** weights `(0.9,0,1)`. **UCSE** = ½(NCSE+1)+Laplacian(CSSVE), w=`(0,1,1)`.
-
-**mGENRE** — no `marginalize`; QID = `max(ids, key=QID)`; score = `exp(ll)`;
-QB context 128, AIDA 256. Exact Table-2 numbers use `score_cache/raw/genre_context_scores_*.pkl`.
-
-**Eigen** — live weigen + DeepWalk; QB NS-weighted JSON + `NS→LQID`; AIDA degree JSON.
-
+## Other notes
+Exact Table-2 numbers use `score_cache/raw/genre_context_scores_*.pkl`.
 Details and cache builders: `caches/README.md`, `cache_building/README.md`.
 Parsed paper cells: `paper/tables/paper_tables.json`.
 
