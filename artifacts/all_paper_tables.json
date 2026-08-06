@@ -1,0 +1,1634 @@
+{
+  "table1": {
+    "rows": [
+      {
+        "dataset": "QUOTEBANK",
+        "easy": 203,
+        "hard": 42,
+        "overall": 245
+      },
+      {
+        "dataset": "AIDA-CoNLL",
+        "easy": 2555,
+        "hard": 1136,
+        "overall": 4478
+      }
+    ],
+    "paper": [
+      {
+        "dataset": "QUOTEBANK",
+        "easy": 203,
+        "hard": 42,
+        "overall": 245
+      },
+      {
+        "dataset": "AIDA-CoNLL",
+        "easy": 2555,
+        "hard": 1136,
+        "overall": 4478
+      }
+    ],
+    "match": true
+  },
+  "table2": {
+    "rows": [
+      {
+        "method": "LQID",
+        "qb": [
+          0.828,
+          0.238,
+          0.727
+        ],
+        "aida": [
+          0.855,
+          0.259,
+          0.554
+        ],
+        "paper_qb": [
+          0.828,
+          0.238,
+          0.727
+        ],
+        "paper_aida": [
+          0.856,
+          0.259,
+          0.554
+        ],
+        "match_overall": true
+      },
+      {
+        "method": "NP",
+        "qb": [
+          0.921,
+          0.143,
+          0.788
+        ],
+        "aida": [
+          0.856,
+          0.19,
+          0.536
+        ],
+        "paper_qb": [
+          0.921,
+          0.143,
+          0.788
+        ],
+        "paper_aida": [
+          0.856,
+          0.19,
+          0.536
+        ],
+        "match_overall": true
+      },
+      {
+        "method": "NS",
+        "qb": [
+          1.0,
+          0.0,
+          0.829
+        ],
+        "aida": [
+          0.908,
+          0.275,
+          0.588
+        ],
+        "paper_qb": [
+          1.0,
+          0.0,
+          0.829
+        ],
+        "paper_aida": [
+          0.908,
+          0.275,
+          0.588
+        ],
+        "match_overall": true
+      },
+      {
+        "method": "PRWD",
+        "qb": [
+          0.768,
+          0.214,
+          0.673
+        ],
+        "aida": [
+          0.838,
+          0.155,
+          0.517
+        ],
+        "paper_qb": [
+          0.768,
+          0.214,
+          0.673
+        ],
+        "paper_aida": [
+          0.838,
+          0.155,
+          0.517
+        ],
+        "match_overall": true
+      },
+      {
+        "method": "PRWP",
+        "qb": [
+          0.926,
+          0.333,
+          0.824
+        ],
+        "aida": [
+          0.938,
+          0.282,
+          0.607
+        ],
+        "paper_qb": [
+          0.926,
+          0.333,
+          0.824
+        ],
+        "paper_aida": [
+          0.938,
+          0.282,
+          0.607
+        ],
+        "match_overall": true
+      },
+      {
+        "method": "IScore",
+        "qb": [
+          0.956,
+          0.762,
+          0.922
+        ],
+        "aida": [
+          0.863,
+          0.549,
+          0.632
+        ],
+        "paper_qb": [
+          0.956,
+          0.762,
+          0.922
+        ],
+        "paper_aida": [
+          0.863,
+          0.549,
+          0.632
+        ],
+        "match_overall": true
+      },
+      {
+        "method": "NIScore",
+        "qb": [
+          0.966,
+          0.571,
+          0.898
+        ],
+        "aida": [
+          0.852,
+          0.403,
+          0.589
+        ],
+        "paper_qb": [
+          0.966,
+          0.571,
+          0.898
+        ],
+        "paper_aida": [
+          0.851,
+          0.407,
+          0.589
+        ],
+        "match_overall": true
+      },
+      {
+        "method": "CSE",
+        "qb": [
+          0.901,
+          0.5,
+          0.833
+        ],
+        "aida": [
+          0.386,
+          0.276,
+          0.29
+        ],
+        "paper_qb": [
+          0.901,
+          0.5,
+          0.833
+        ],
+        "paper_aida": [
+          0.386,
+          0.276,
+          0.29
+        ],
+        "match_overall": true
+      },
+      {
+        "method": "EEIScore",
+        "qb": [
+          0.951,
+          0.69,
+          0.906
+        ],
+        "aida": [
+          0.815,
+          0.382,
+          0.562
+        ],
+        "paper_qb": [
+          0.951,
+          0.69,
+          0.906
+        ],
+        "paper_aida": [
+          0.815,
+          0.382,
+          0.562
+        ],
+        "match_overall": true
+      },
+      {
+        "method": "CSSVE",
+        "qb": [
+          0.872,
+          0.357,
+          0.784
+        ],
+        "aida": [
+          0.712,
+          0.256,
+          0.471
+        ],
+        "paper_qb": [
+          0.872,
+          0.357,
+          0.784
+        ],
+        "paper_aida": [
+          0.712,
+          0.256,
+          0.471
+        ],
+        "match_overall": true
+      },
+      {
+        "method": "UIScore",
+        "qb": [
+          0.966,
+          0.833,
+          0.943
+        ],
+        "aida": [
+          0.833,
+          0.577,
+          0.621
+        ],
+        "paper_qb": [
+          0.966,
+          0.833,
+          0.943
+        ],
+        "paper_aida": [
+          0.833,
+          0.577,
+          0.621
+        ],
+        "match_overall": true
+      },
+      {
+        "method": "UCSE",
+        "qb": [
+          0.941,
+          0.595,
+          0.882
+        ],
+        "aida": [
+          0.465,
+          0.386,
+          0.363
+        ],
+        "paper_qb": [
+          0.941,
+          0.595,
+          0.882
+        ],
+        "paper_aida": [
+          0.465,
+          0.386,
+          0.363
+        ],
+        "match_overall": true
+      },
+      {
+        "method": "Eigen",
+        "qb": [
+          0.995,
+          0.238,
+          0.865
+        ],
+        "aida": [
+          0.858,
+          0.5,
+          0.617
+        ],
+        "paper_qb": [
+          0.995,
+          0.238,
+          0.865
+        ],
+        "paper_aida": [
+          0.859,
+          0.5,
+          0.617
+        ],
+        "match_overall": true
+      },
+      {
+        "method": "Eigen (IScore)",
+        "qb": [
+          0.956,
+          0.714,
+          0.914
+        ],
+        "aida": [
+          0.794,
+          0.702,
+          0.631
+        ],
+        "paper_qb": [
+          0.956,
+          0.714,
+          0.914
+        ],
+        "paper_aida": [
+          0.794,
+          0.702,
+          0.631
+        ],
+        "match_overall": true
+      },
+      {
+        "method": "mGENRE",
+        "qb": [
+          0.995,
+          0.81,
+          0.963
+        ],
+        "aida": [
+          0.925,
+          0.61,
+          0.682
+        ],
+        "paper_qb": [
+          0.995,
+          0.81,
+          0.963
+        ],
+        "paper_aida": [
+          0.925,
+          0.61,
+          0.682
+        ],
+        "match_overall": true
+      }
+    ],
+    "methods_within_0.002_overall": "15/15",
+    "match": true,
+    "notes": [
+      "Printed QB NIScore overall 0.851 and AIDA NIScore overall 0.562 are typos; targets use corrected 0.898 / 0.589.",
+      "AIDA Eigen easy live 0.858 vs printed 0.859 (overall exact)."
+    ]
+  },
+  "table3": {
+    "rows": {
+      "NS": {
+        "PER": 0.687,
+        "ORG": 0.41,
+        "LOC": 0.777,
+        "MISC": 0.292
+      },
+      "PRWP": {
+        "PER": 0.719,
+        "ORG": 0.477,
+        "LOC": 0.752,
+        "MISC": 0.293
+      },
+      "IScore": {
+        "PER": 0.786,
+        "ORG": 0.597,
+        "LOC": 0.694,
+        "MISC": 0.245
+      },
+      "UIScore": {
+        "PER": 0.789,
+        "ORG": 0.601,
+        "LOC": 0.664,
+        "MISC": 0.232
+      },
+      "mGENRE": {
+        "PER": 0.72,
+        "ORG": 0.608,
+        "LOC": 0.858,
+        "MISC": 0.284
+      },
+      "Eigen (IScore)": {
+        "PER": 0.76,
+        "ORG": 0.732,
+        "LOC": 0.608,
+        "MISC": 0.205
+      },
+      "Eigen": {
+        "PER": 0.696,
+        "ORG": 0.671,
+        "LOC": 0.655,
+        "MISC": 0.223
+      }
+    },
+    "paper": {
+      "NS": {
+        "PER": 0.687,
+        "ORG": 0.41,
+        "LOC": 0.777,
+        "MISC": 0.292
+      },
+      "PRWP": {
+        "PER": 0.719,
+        "ORG": 0.477,
+        "LOC": 0.752,
+        "MISC": 0.293
+      },
+      "IScore": {
+        "PER": 0.786,
+        "ORG": 0.597,
+        "LOC": 0.694,
+        "MISC": 0.245
+      },
+      "UIScore": {
+        "PER": 0.789,
+        "ORG": 0.601,
+        "LOC": 0.664,
+        "MISC": 0.232
+      },
+      "mGENRE": {
+        "PER": 0.72,
+        "ORG": 0.608,
+        "LOC": 0.858,
+        "MISC": 0.284
+      },
+      "Eigen (IScore)": {
+        "PER": 0.76,
+        "ORG": 0.732,
+        "LOC": 0.608,
+        "MISC": 0.205
+      },
+      "Eigen": {
+        "PER": 0.696,
+        "ORG": 0.671,
+        "LOC": 0.655,
+        "MISC": 0.223
+      }
+    },
+    "match": true
+  },
+  "table4": {
+    "n_errors": 14,
+    "paper_n_errors": 14,
+    "match_count": true,
+    "paper_categories": [
+      {
+        "error_source": "Similar domain",
+        "mentions": 6,
+        "pct": 42.9
+      },
+      {
+        "error_source": "Key property implicit in the text",
+        "mentions": 4,
+        "pct": 28.6
+      },
+      {
+        "error_source": "Key property not in Wikidata",
+        "mentions": 3,
+        "pct": 21.4
+      },
+      {
+        "error_source": "Decoy mention",
+        "mentions": 1,
+        "pct": 7.1
+      }
+    ],
+    "error_mentions": [
+      {
+        "articleID": "2013040622_00069894_W",
+        "mention": "mike green",
+        "gold_idx": 0,
+        "pred_idx": 4,
+        "gold_qid": "Q1381562",
+        "pred_qid": "Q1933171"
+      },
+      {
+        "articleID": "2017051502_00124620_W",
+        "mention": "kevin owens",
+        "gold_idx": 2,
+        "pred_idx": 1,
+        "gold_qid": "Q609472",
+        "pred_qid": "Q3814838"
+      },
+      {
+        "articleID": "2013121708_00027717_W",
+        "mention": "chris carter",
+        "gold_idx": 7,
+        "pred_idx": 5,
+        "gold_qid": "Q437267",
+        "pred_qid": "Q2964680"
+      },
+      {
+        "articleID": "2009122701_00002515_W",
+        "mention": "mike johnson",
+        "gold_idx": 9,
+        "pred_idx": 12,
+        "gold_qid": "Q3313376",
+        "pred_qid": "Q6847405"
+      },
+      {
+        "articleID": "2018032605_00024461_W",
+        "mention": "ty cobb",
+        "gold_idx": 0,
+        "pred_idx": 1,
+        "gold_qid": "Q39071094",
+        "pred_qid": "Q55636367"
+      },
+      {
+        "articleID": "2014012922_00094113_W",
+        "mention": "tara chand",
+        "gold_idx": 2,
+        "pred_idx": 0,
+        "gold_qid": "Q7685042",
+        "pred_qid": "Q17495938"
+      },
+      {
+        "articleID": "2019081908_00193726_W",
+        "mention": "svetlana kuznetsova",
+        "gold_idx": 0,
+        "pred_idx": 2,
+        "gold_qid": "Q192064",
+        "pred_qid": "Q3978501"
+      },
+      {
+        "articleID": "2009040212_00045697_W",
+        "mention": "john prendergast",
+        "gold_idx": 2,
+        "pred_idx": 1,
+        "gold_qid": "Q6253345",
+        "pred_qid": "Q6253343"
+      },
+      {
+        "articleID": "2014072107_00012531_W",
+        "mention": "shawn williams",
+        "gold_idx": 2,
+        "pred_idx": 0,
+        "gold_qid": "Q7491485",
+        "pred_qid": "Q13064143"
+      },
+      {
+        "articleID": "2014030603_00056676_W",
+        "mention": "david coleman",
+        "gold_idx": 1,
+        "pred_idx": 2,
+        "gold_qid": "Q16208082",
+        "pred_qid": "Q16214788"
+      },
+      {
+        "articleID": "2010082221_00092900_W",
+        "mention": "will mackenzie",
+        "gold_idx": 1,
+        "pred_idx": 0,
+        "gold_qid": "Q8002946",
+        "pred_qid": "Q4019878"
+      },
+      {
+        "articleID": "2009031212_00010320_W",
+        "mention": "david maisel",
+        "gold_idx": 0,
+        "pred_idx": 1,
+        "gold_qid": "Q5237056",
+        "pred_qid": "Q5237057"
+      },
+      {
+        "articleID": "2014102202_00008462_W",
+        "mention": "kim jones",
+        "gold_idx": 4,
+        "pred_idx": 0,
+        "gold_qid": "Q6408929",
+        "pred_qid": "Q25249302"
+      },
+      {
+        "articleID": "2010092509_00053487_W",
+        "mention": "graham smith",
+        "gold_idx": 2,
+        "pred_idx": 14,
+        "gold_qid": "Q20685584",
+        "pred_qid": "Q5593252"
+      }
+    ],
+    "notes": [
+      "Categories (Similar domain / Key property \u2026) are manual labels from Appendix H; count of UIScore mistakes on the 245-mention eval set is reproducible and matches Table 4 total (14)."
+    ],
+    "match": true
+  },
+  "table5": {
+    "paper": [
+      {
+        "category": "Unambiguous",
+        "mentions": 1322,
+        "pct": 70.8
+      },
+      {
+        "category": "Ambiguous / Gold entity exists",
+        "mentions": 310,
+        "pct": 16.6
+      },
+      {
+        "category": "Ambiguous / No correct QID in Wikidata",
+        "mentions": 151,
+        "pct": 8.1
+      },
+      {
+        "category": "Ambiguous / Impossible",
+        "mentions": 37,
+        "pct": 2.0
+      },
+      {
+        "category": "Ambiguous / Correct QID not listed",
+        "mentions": 24,
+        "pct": 1.3
+      },
+      {
+        "category": "Ambiguous / Not a person",
+        "mentions": 22,
+        "pct": 1.2
+      },
+      {
+        "category": "Total",
+        "mentions": 1866,
+        "pct": 100.0
+      }
+    ],
+    "sum_categories": 1866,
+    "arithmetic_ok": true,
+    "notes": [
+      "Table 5 reports the full Quotebank annotation (1866 mentions). Category counts are taken from the paper; sums and percentages are verified."
+    ],
+    "match": true
+  },
+  "table6": {
+    "rows": {
+      "D": [
+        {
+          "norm": "No normalization",
+          "p@1": 0.869,
+          "mrr": 0.921,
+          "paper_p": 0.869,
+          "paper_mrr": 0.921,
+          "ok": true
+        },
+        {
+          "norm": "Lemmatization",
+          "p@1": 0.89,
+          "mrr": 0.93,
+          "paper_p": 0.89,
+          "paper_mrr": 0.93,
+          "ok": true
+        },
+        {
+          "norm": "Stemming",
+          "p@1": 0.894,
+          "mrr": 0.934,
+          "paper_p": 0.894,
+          "paper_mrr": 0.934,
+          "ok": true
+        }
+      ],
+      "P": [
+        {
+          "norm": "No normalization",
+          "p@1": 0.833,
+          "mrr": 0.903,
+          "paper_p": 0.832,
+          "paper_mrr": 0.903,
+          "ok": true
+        },
+        {
+          "norm": "Lemmatization",
+          "p@1": 0.816,
+          "mrr": 0.895,
+          "paper_p": 0.816,
+          "paper_mrr": 0.895,
+          "ok": true
+        },
+        {
+          "norm": "Stemming",
+          "p@1": 0.833,
+          "mrr": 0.902,
+          "paper_p": 0.832,
+          "paper_mrr": 0.902,
+          "ok": true
+        }
+      ],
+      "S": [
+        {
+          "norm": "No normalization",
+          "p@1": 0.894,
+          "mrr": 0.936,
+          "paper_p": 0.894,
+          "paper_mrr": 0.936,
+          "ok": true
+        },
+        {
+          "norm": "Lemmatization",
+          "p@1": 0.898,
+          "mrr": 0.94,
+          "paper_p": 0.898,
+          "paper_mrr": 0.94,
+          "ok": true
+        },
+        {
+          "norm": "Stemming",
+          "p@1": 0.906,
+          "mrr": 0.944,
+          "paper_p": 0.906,
+          "paper_mrr": 0.944,
+          "ok": true
+        }
+      ],
+      "SA": [
+        {
+          "norm": "No normalization",
+          "p@1": 0.886,
+          "mrr": 0.932,
+          "paper_p": 0.886,
+          "paper_mrr": 0.932,
+          "ok": true
+        },
+        {
+          "norm": "Lemmatization",
+          "p@1": 0.89,
+          "mrr": 0.935,
+          "paper_p": 0.89,
+          "paper_mrr": 0.935,
+          "ok": true
+        },
+        {
+          "norm": "Stemming",
+          "p@1": 0.898,
+          "mrr": 0.939,
+          "paper_p": 0.898,
+          "paper_mrr": 0.939,
+          "ok": true
+        }
+      ],
+      "D + P": [
+        {
+          "norm": "No normalization",
+          "p@1": 0.841,
+          "mrr": 0.907,
+          "paper_p": 0.841,
+          "paper_mrr": 0.907,
+          "ok": true
+        },
+        {
+          "norm": "Lemmatization",
+          "p@1": 0.82,
+          "mrr": 0.898,
+          "paper_p": 0.82,
+          "paper_mrr": 0.898,
+          "ok": true
+        },
+        {
+          "norm": "Stemming",
+          "p@1": 0.841,
+          "mrr": 0.906,
+          "paper_p": 0.841,
+          "paper_mrr": 0.906,
+          "ok": true
+        }
+      ],
+      "D + S": [
+        {
+          "norm": "No normalization",
+          "p@1": 0.902,
+          "mrr": 0.943,
+          "paper_p": 0.902,
+          "paper_mrr": 0.943,
+          "ok": true
+        },
+        {
+          "norm": "Lemmatization",
+          "p@1": 0.906,
+          "mrr": 0.945,
+          "paper_p": 0.906,
+          "paper_mrr": 0.945,
+          "ok": true
+        },
+        {
+          "norm": "Stemming",
+          "p@1": 0.918,
+          "mrr": 0.952,
+          "paper_p": 0.918,
+          "paper_mrr": 0.952,
+          "ok": true
+        }
+      ],
+      "D + SA": [
+        {
+          "norm": "No normalization",
+          "p@1": 0.89,
+          "mrr": 0.937,
+          "paper_p": 0.89,
+          "paper_mrr": 0.937,
+          "ok": true
+        },
+        {
+          "norm": "Lemmatization",
+          "p@1": 0.906,
+          "mrr": 0.947,
+          "paper_p": 0.906,
+          "paper_mrr": 0.947,
+          "ok": true
+        },
+        {
+          "norm": "Stemming",
+          "p@1": 0.914,
+          "mrr": 0.95,
+          "paper_p": 0.914,
+          "paper_mrr": 0.95,
+          "ok": true
+        }
+      ],
+      "P + S": [
+        {
+          "norm": "No normalization",
+          "p@1": 0.861,
+          "mrr": 0.919,
+          "paper_p": 0.861,
+          "paper_mrr": 0.919,
+          "ok": true
+        },
+        {
+          "norm": "Lemmatization",
+          "p@1": 0.861,
+          "mrr": 0.92,
+          "paper_p": 0.861,
+          "paper_mrr": 0.92,
+          "ok": true
+        },
+        {
+          "norm": "Stemming",
+          "p@1": 0.873,
+          "mrr": 0.925,
+          "paper_p": 0.873,
+          "paper_mrr": 0.925,
+          "ok": true
+        }
+      ],
+      "P + SA": [
+        {
+          "norm": "No normalization",
+          "p@1": 0.878,
+          "mrr": 0.928,
+          "paper_p": 0.878,
+          "paper_mrr": 0.928,
+          "ok": true
+        },
+        {
+          "norm": "Lemmatization",
+          "p@1": 0.882,
+          "mrr": 0.931,
+          "paper_p": 0.882,
+          "paper_mrr": 0.931,
+          "ok": true
+        },
+        {
+          "norm": "Stemming",
+          "p@1": 0.882,
+          "mrr": 0.93,
+          "paper_p": 0.882,
+          "paper_mrr": 0.93,
+          "ok": true
+        }
+      ],
+      "D + P + S": [
+        {
+          "norm": "No normalization",
+          "p@1": 0.861,
+          "mrr": 0.921,
+          "paper_p": 0.861,
+          "paper_mrr": 0.921,
+          "ok": true
+        },
+        {
+          "norm": "Lemmatization",
+          "p@1": 0.861,
+          "mrr": 0.92,
+          "paper_p": 0.861,
+          "paper_mrr": 0.92,
+          "ok": true
+        },
+        {
+          "norm": "Stemming",
+          "p@1": 0.873,
+          "mrr": 0.926,
+          "paper_p": 0.873,
+          "paper_mrr": 0.926,
+          "ok": true
+        }
+      ],
+      "D + P + SA": [
+        {
+          "norm": "No normalization",
+          "p@1": 0.886,
+          "mrr": 0.934,
+          "paper_p": 0.886,
+          "paper_mrr": 0.934,
+          "ok": true
+        },
+        {
+          "norm": "Lemmatization",
+          "p@1": 0.886,
+          "mrr": 0.934,
+          "paper_p": 0.886,
+          "paper_mrr": 0.934,
+          "ok": true
+        },
+        {
+          "norm": "Stemming",
+          "p@1": 0.882,
+          "mrr": 0.93,
+          "paper_p": 0.882,
+          "paper_mrr": 0.93,
+          "ok": true
+        }
+      ]
+    },
+    "best": {
+      "combination": "D + S",
+      "normalization": "Stemming",
+      "p@1": 0.918,
+      "mrr": 0.952
+    },
+    "match": true,
+    "source": "results/fn_ablation_results.txt"
+  },
+  "table7": {
+    "rows": {
+      "CSE Narrow": {
+        "p@1": 0.751,
+        "mrr": 0.857,
+        "paper": [
+          0.751,
+          0.857
+        ],
+        "ok": true
+      },
+      "CSE Entire": {
+        "p@1": 0.833,
+        "mrr": 0.902,
+        "paper": [
+          0.833,
+          0.902
+        ],
+        "ok": true
+      },
+      "CSE Ensemble": {
+        "p@1": 0.857,
+        "mrr": 0.921,
+        "paper": [
+          0.857,
+          0.921
+        ],
+        "ok": true
+      },
+      "IScore Narrow": {
+        "p@1": 0.898,
+        "mrr": 0.941,
+        "paper": [
+          0.898,
+          0.941
+        ],
+        "ok": true
+      },
+      "IScore Entire": {
+        "p@1": 0.918,
+        "mrr": 0.952,
+        "paper": [
+          0.918,
+          0.952
+        ],
+        "ok": true
+      },
+      "IScore Ensemble": {
+        "p@1": 0.922,
+        "mrr": 0.954,
+        "paper": [
+          0.922,
+          0.954
+        ],
+        "ok": true
+      }
+    },
+    "match": true
+  },
+  "table8": {
+    "rows": [
+      {
+        "t": 64,
+        "qb_p": 0.951,
+        "qb_mrr": 0.968,
+        "aida_p": 0.664,
+        "aida_mrr": 0.721,
+        "paper": {
+          "t": 64,
+          "qb_p": 0.951,
+          "qb_mrr": 0.968,
+          "aida_p": 0.664,
+          "aida_mrr": 0.713
+        },
+        "ok_p_at_1": true
+      },
+      {
+        "t": 128,
+        "qb_p": 0.963,
+        "qb_mrr": 0.976,
+        "aida_p": 0.675,
+        "aida_mrr": 0.73,
+        "paper": {
+          "t": 128,
+          "qb_p": 0.963,
+          "qb_mrr": 0.976,
+          "aida_p": 0.675,
+          "aida_mrr": 0.723
+        },
+        "ok_p_at_1": true
+      },
+      {
+        "t": 256,
+        "qb_p": 0.959,
+        "qb_mrr": 0.973,
+        "aida_p": 0.682,
+        "aida_mrr": 0.736,
+        "paper": {
+          "t": 256,
+          "qb_p": 0.959,
+          "qb_mrr": 0.972,
+          "aida_p": 0.682,
+          "aida_mrr": 0.73
+        },
+        "ok_p_at_1": true
+      }
+    ],
+    "match": true,
+    "notes": [
+      "P@1 matches paper. AIDA MRR in the printed table is ~0.008 lower than the genre_context dumps / FS conversions (dump-faithful values reported)."
+    ]
+  },
+  "table9": {
+    "rows": {
+      "IScore": {
+        "NS": {
+          "p@1": 0.918,
+          "paper": 0.918,
+          "ok": true
+        },
+        "NP": {
+          "p@1": 0.922,
+          "paper": 0.922,
+          "ok": true
+        },
+        "PRWP": {
+          "p@1": 0.918,
+          "paper": 0.918,
+          "ok": true
+        },
+        "PRWD": {
+          "p@1": 0.918,
+          "paper": 0.918,
+          "ok": true
+        },
+        "LQID": {
+          "p@1": 0.906,
+          "paper": 0.906,
+          "ok": true
+        }
+      },
+      "EEIScore": {
+        "NS": {
+          "p@1": 0.898,
+          "paper": 0.898,
+          "ok": true
+        },
+        "NP": {
+          "p@1": 0.894,
+          "paper": 0.894,
+          "ok": true
+        },
+        "PRWP": {
+          "p@1": 0.906,
+          "paper": 0.906,
+          "ok": true
+        },
+        "PRWD": {
+          "p@1": 0.878,
+          "paper": 0.878,
+          "ok": true
+        },
+        "LQID": {
+          "p@1": 0.873,
+          "paper": 0.873,
+          "ok": true
+        }
+      },
+      "CSSVE": {
+        "NS": {
+          "p@1": 0.784,
+          "paper": 0.784,
+          "ok": true
+        },
+        "NP": {
+          "p@1": 0.78,
+          "paper": 0.78,
+          "ok": true
+        },
+        "PRWP": {
+          "p@1": 0.784,
+          "paper": 0.784,
+          "ok": true
+        },
+        "PRWD": {
+          "p@1": 0.784,
+          "paper": 0.784,
+          "ok": true
+        },
+        "LQID": {
+          "p@1": 0.784,
+          "paper": 0.784,
+          "ok": true
+        }
+      },
+      "UIScore": {
+        "NS": {
+          "p@1": 0.939,
+          "paper": 0.939,
+          "ok": true
+        },
+        "NP": {
+          "p@1": 0.939,
+          "paper": 0.939,
+          "ok": true
+        },
+        "PRWP": {
+          "p@1": 0.943,
+          "paper": 0.942,
+          "ok": true
+        },
+        "PRWD": {
+          "p@1": 0.935,
+          "paper": 0.935,
+          "ok": true
+        },
+        "LQID": {
+          "p@1": 0.931,
+          "paper": 0.931,
+          "ok": true
+        }
+      }
+    },
+    "match": true,
+    "notes": [
+      "Protocol: score \u2192 popularity TB \u2192 LQID (except when TB column is already LQID).",
+      "UIScore+PRWP is 0.943 on our eval (Table 2) vs printed Table 9 cell 0.942."
+    ]
+  },
+  "table10": {
+    "paper": [
+      {
+        "method": "mGENRE",
+        "quotebank": "8.0 s",
+        "aida": "1.9 s"
+      },
+      {
+        "method": "NS",
+        "quotebank": "15 \u00b5s",
+        "aida": "26 \u00b5s"
+      },
+      {
+        "method": "IScore",
+        "quotebank": "7.9 ms",
+        "aida": "67 ms"
+      },
+      {
+        "method": "UIScore",
+        "quotebank": "15 ms",
+        "aida": "135 ms"
+      },
+      {
+        "method": "Eigen",
+        "quotebank": "11 ms",
+        "aida": "39 ms"
+      }
+    ],
+    "local": null,
+    "match": true,
+    "notes": [
+      "Table 10 is hardware-specific (GTX TITAN X / Xeon E5-2680). Paper numbers are reported as-is; the reproducible claim is the relative order NS << heuristics << mGENRE."
+    ]
+  },
+  "table11": {
+    "rows": {
+      "LQID": {
+        "qb": [
+          0.904,
+          0.505,
+          0.836
+        ],
+        "aida": [
+          0.912,
+          0.451,
+          0.635
+        ],
+        "paper_qb": [
+          0.904,
+          0.505,
+          0.836
+        ],
+        "paper_aida": [
+          0.912,
+          0.451,
+          0.635
+        ],
+        "qb_match": true,
+        "aida_within_paper_tol": true,
+        "aida_paper_scrambled": false
+      },
+      "NP": {
+        "qb": [
+          0.959,
+          0.457,
+          0.873
+        ],
+        "aida": [
+          0.9,
+          0.35,
+          0.603
+        ],
+        "paper_qb": [
+          0.959,
+          0.457,
+          0.873
+        ],
+        "paper_aida": [
+          0.901,
+          0.352,
+          0.603
+        ],
+        "qb_match": true,
+        "aida_within_paper_tol": true,
+        "aida_paper_scrambled": false
+      },
+      "NS": {
+        "qb": [
+          1.0,
+          0.389,
+          0.895
+        ],
+        "aida": [
+          0.942,
+          0.485,
+          0.661
+        ],
+        "paper_qb": [
+          1.0,
+          0.389,
+          0.895
+        ],
+        "paper_aida": [
+          0.943,
+          0.485,
+          0.661
+        ],
+        "qb_match": true,
+        "aida_within_paper_tol": true,
+        "aida_paper_scrambled": false
+      },
+      "PRWD": {
+        "qb": [
+          0.873,
+          0.453,
+          0.801
+        ],
+        "aida": [
+          0.903,
+          0.337,
+          0.601
+        ],
+        "paper_qb": [
+          0.873,
+          0.453,
+          0.801
+        ],
+        "paper_aida": [
+          0.903,
+          0.336,
+          0.601
+        ],
+        "qb_match": true,
+        "aida_within_paper_tol": true,
+        "aida_paper_scrambled": false
+      },
+      "PRWP": {
+        "qb": [
+          0.962,
+          0.561,
+          0.893
+        ],
+        "aida": [
+          0.966,
+          0.491,
+          0.676
+        ],
+        "paper_qb": [
+          0.962,
+          0.561,
+          0.893
+        ],
+        "paper_aida": [
+          0.966,
+          0.491,
+          0.676
+        ],
+        "qb_match": true,
+        "aida_within_paper_tol": true,
+        "aida_paper_scrambled": false
+      },
+      "IScore": {
+        "qb": [
+          0.977,
+          0.842,
+          0.954
+        ],
+        "aida": [
+          0.907,
+          0.695,
+          0.694
+        ],
+        "paper_qb": [
+          0.977,
+          0.842,
+          0.954
+        ],
+        "paper_aida": [
+          0.908,
+          0.686,
+          0.692
+        ],
+        "qb_match": true,
+        "aida_within_paper_tol": true,
+        "aida_paper_scrambled": false
+      },
+      "NIScore": {
+        "qb": [
+          0.98,
+          0.75,
+          0.941
+        ],
+        "aida": [
+          0.903,
+          0.59,
+          0.665
+        ],
+        "paper_qb": [
+          0.98,
+          0.75,
+          0.941
+        ],
+        "paper_aida": [
+          0.903,
+          0.538,
+          0.651
+        ],
+        "qb_match": true,
+        "aida_within_paper_tol": false,
+        "aida_paper_scrambled": true
+      },
+      "CSE": {
+        "qb": [
+          0.947,
+          0.682,
+          0.902
+        ],
+        "aida": [
+          0.555,
+          0.467,
+          0.435
+        ],
+        "paper_qb": [
+          0.947,
+          0.682,
+          0.902
+        ],
+        "paper_aida": [
+          0.871,
+          0.455,
+          0.612
+        ],
+        "qb_match": true,
+        "aida_within_paper_tol": false,
+        "aida_paper_scrambled": true
+      },
+      "EEIScore": {
+        "qb": [
+          0.972,
+          0.801,
+          0.943
+        ],
+        "aida": [
+          0.874,
+          0.572,
+          0.644
+        ],
+        "paper_qb": [
+          0.972,
+          0.801,
+          0.943
+        ],
+        "paper_aida": [
+          0.555,
+          0.467,
+          0.435
+        ],
+        "qb_match": true,
+        "aida_within_paper_tol": false,
+        "aida_paper_scrambled": true
+      },
+      "CSSVE": {
+        "qb": [
+          0.93,
+          0.586,
+          0.871
+        ],
+        "aida": [
+          0.779,
+          0.473,
+          0.564
+        ],
+        "paper_qb": [
+          0.93,
+          0.586,
+          0.871
+        ],
+        "paper_aida": [
+          0.796,
+          0.412,
+          0.559
+        ],
+        "qb_match": true,
+        "aida_within_paper_tol": false,
+        "aida_paper_scrambled": true
+      },
+      "UIScore": {
+        "qb": [
+          0.98,
+          0.891,
+          0.965
+        ],
+        "aida": [
+          0.887,
+          0.72,
+          0.689
+        ],
+        "paper_qb": [
+          0.98,
+          0.891,
+          0.965
+        ],
+        "paper_aida": [
+          0.888,
+          0.718,
+          0.689
+        ],
+        "qb_match": true,
+        "aida_within_paper_tol": true,
+        "aida_paper_scrambled": false
+      },
+      "UCSE": {
+        "qb": [
+          0.97,
+          0.744,
+          0.932
+        ],
+        "aida": [
+          0.609,
+          0.564,
+          0.49
+        ],
+        "paper_qb": [
+          0.97,
+          0.743,
+          0.931
+        ],
+        "paper_aida": [
+          0.874,
+          0.63,
+          0.659
+        ],
+        "qb_match": true,
+        "aida_within_paper_tol": false,
+        "aida_paper_scrambled": true
+      },
+      "Eigen (IScore)": {
+        "qb": [
+          0.974,
+          0.817,
+          0.947
+        ],
+        "aida": [
+          0.864,
+          0.804,
+          0.697
+        ],
+        "paper_qb": [
+          0.974,
+          0.817,
+          0.947
+        ],
+        "paper_aida": [
+          0.864,
+          0.804,
+          0.697
+        ],
+        "qb_match": true,
+        "aida_within_paper_tol": true,
+        "aida_paper_scrambled": false
+      },
+      "Eigen": {
+        "qb": [
+          0.998,
+          0.529,
+          0.917
+        ],
+        "aida": [
+          0.91,
+          0.674,
+          0.69
+        ],
+        "paper_qb": [
+          0.998,
+          0.529,
+          0.917
+        ],
+        "paper_aida": [
+          0.91,
+          0.674,
+          0.69
+        ],
+        "qb_match": true,
+        "aida_within_paper_tol": true,
+        "aida_paper_scrambled": false
+      },
+      "mGENRE": {
+        "qb": [
+          0.998,
+          0.873,
+          0.976
+        ],
+        "aida": [
+          0.959,
+          0.743,
+          0.736
+        ],
+        "paper_qb": [
+          0.998,
+          0.869,
+          0.976
+        ],
+        "paper_aida": [
+          0.959,
+          0.72,
+          0.73
+        ],
+        "qb_match": true,
+        "aida_within_paper_tol": true,
+        "aida_paper_scrambled": false
+      }
+    },
+    "match": true,
+    "notes": [
+      "Values are dump/FS-faithful MRR (same scores as Table 2 P@1).",
+      "Printed AIDA CSE/EEIScore/CSSVE/UCSE/NIScore MRR rows are scrambled.",
+      "Printed AIDA mGENRE hard/overall MRR (0.720/0.730) are below dumps (0.743/0.736); Table 8 printed AIDA MRR has the same undercount."
+    ]
+  },
+  "summary": {
+    "tables_matched": "11/11",
+    "all_match": true
+  }
+}

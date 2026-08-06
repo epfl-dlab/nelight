@@ -1,0 +1,147 @@
+{
+  "paper": {
+    "title": "Strong Heuristics for Named Entity Linking",
+    "authors": ["Marko Čuljak", "Andreas Spitz", "Robert West", "Akhil Arora"],
+    "venue": "NAACL 2022 Student Research Workshop",
+    "anthology": "https://aclanthology.org/2022.naacl-srw.30/",
+    "arxiv": "https://arxiv.org/abs/2207.02824",
+    "pdf_local": "paper/culjak-etal-2022-strong.pdf"
+  },
+  "table1_dataset_stats": {
+    "description": "Number of mentions in difficulty categories",
+    "rows": [
+      {"dataset": "QUOTEBANK", "easy": 203, "hard": 42, "overall": 245},
+      {"dataset": "AIDA-CoNLL", "easy": 2555, "hard": 1136, "overall": 4478}
+    ],
+    "notes": "On AIDA, Easy+Hard != Overall because for some mentions the gold entity was not in the candidate set."
+  },
+  "table2_p_at_1": {
+    "description": "P@1 of methods on QUOTEBANK and AIDA-CoNLL (mean ± half-width of 95% bootstrap CI)",
+    "columns": ["method", "qb_easy", "qb_hard", "qb_overall", "aida_easy", "aida_hard", "aida_overall"],
+    "rows": [
+      {"method": "Random", "qb_easy": [0.374, 0.017], "qb_hard": [0.260, 0.045], "qb_overall": [0.354, 0.024], "aida_easy": [0.267, 0.014], "aida_hard": [0.066, 0.004], "aida_overall": [0.169, 0.009]},
+      {"method": "LQID", "qb_easy": [0.828, 0.054], "qb_hard": [0.238, 0.140], "qb_overall": [0.727, 0.056], "aida_easy": [0.856, 0.014], "aida_hard": [0.259, 0.029], "aida_overall": [0.554, 0.016]},
+      {"method": "NP", "qb_easy": [0.921, 0.040], "qb_hard": [0.143, 0.120], "qb_overall": [0.788, 0.052], "aida_easy": [0.856, 0.014], "aida_hard": [0.190, 0.023], "aida_overall": [0.536, 0.015]},
+      {"method": "NS", "qb_easy": [1.000, 0.000], "qb_hard": [0.000, 0.000], "qb_overall": [0.829, 0.048], "aida_easy": [0.908, 0.012], "aida_hard": [0.275, 0.026], "aida_overall": [0.588, 0.014]},
+      {"method": "PRWD", "qb_easy": [0.768, 0.059], "qb_hard": [0.214, 0.132], "qb_overall": [0.673, 0.061], "aida_easy": [0.838, 0.014], "aida_hard": [0.155, 0.021], "aida_overall": [0.517, 0.015]},
+      {"method": "PRWP", "qb_easy": [0.926, 0.040], "qb_hard": [0.333, 0.140], "qb_overall": [0.824, 0.048], "aida_easy": [0.938, 0.010], "aida_hard": [0.282, 0.027], "aida_overall": [0.607, 0.014]},
+      {"method": "IScore", "qb_easy": [0.956, 0.030], "qb_hard": [0.762, 0.134], "qb_overall": [0.922, 0.034], "aida_easy": [0.863, 0.014], "aida_hard": [0.549, 0.029], "aida_overall": [0.632, 0.015]},
+      {"method": "NIScore", "qb_easy": [0.966, 0.030], "qb_hard": [0.571, 0.151], "qb_overall": [0.851, 0.014], "aida_easy": [0.851, 0.014], "aida_hard": [0.407, 0.028], "aida_overall": [0.562, 0.015]},
+      {"method": "CSE", "qb_easy": [0.901, 0.044], "qb_hard": [0.500, 0.159], "qb_overall": [0.833, 0.047], "aida_easy": [0.386, 0.019], "aida_hard": [0.276, 0.026], "aida_overall": [0.290, 0.014]},
+      {"method": "EEIScore", "qb_easy": [0.951, 0.034], "qb_hard": [0.690, 0.143], "qb_overall": [0.906, 0.036], "aida_easy": [0.815, 0.016], "aida_hard": [0.382, 0.031], "aida_overall": [0.562, 0.015]},
+      {"method": "CSSVE", "qb_easy": [0.872, 0.049], "qb_hard": [0.357, 0.155], "qb_overall": [0.784, 0.051], "aida_easy": [0.712, 0.017], "aida_hard": [0.256, 0.026], "aida_overall": [0.471, 0.015]},
+      {"method": "UIScore", "qb_easy": [0.966, 0.030], "qb_hard": [0.833, 0.123], "qb_overall": [0.943, 0.029], "aida_easy": [0.833, 0.014], "aida_hard": [0.577, 0.028], "aida_overall": [0.621, 0.014]},
+      {"method": "UCSE", "qb_easy": [0.941, 0.034], "qb_hard": [0.595, 0.156], "qb_overall": [0.882, 0.042], "aida_easy": [0.465, 0.019], "aida_hard": [0.386, 0.029], "aida_overall": [0.363, 0.014]},
+      {"method": "Eigen", "qb_easy": [0.995, 0.010], "qb_hard": [0.238, 0.134], "qb_overall": [0.865, 0.044], "aida_easy": [0.859, 0.014], "aida_hard": [0.500, 0.030], "aida_overall": [0.617, 0.015]},
+      {"method": "Eigen (IScore)", "qb_easy": [0.956, 0.030], "qb_hard": [0.714, 0.147], "qb_overall": [0.914, 0.037], "aida_easy": [0.794, 0.015], "aida_hard": [0.702, 0.029], "aida_overall": [0.631, 0.014]},
+      {"method": "mGENRE", "qb_easy": [0.995, 0.010], "qb_hard": [0.810, 0.143], "qb_overall": [0.963, 0.025], "aida_easy": [0.925, 0.011], "aida_hard": [0.610, 0.028], "aida_overall": [0.682, 0.014]}
+    ],
+    "hyperparams": {
+      "qb_uiscore_weights": [1, 1, 1],
+      "qb_ucse_weights": [0.45, 0.9, 0.2],
+      "aida_uiscore_weights": [0.9, 0, 1],
+      "aida_ucse_weights": [0, 1, 1],
+      "tie_breakers": ["NS then LQID for Quotebank composite; AIDA uses first-equal / paper-specific tie handling"],
+      "bootstrap_samples": 10000
+    }
+  },
+  "table3_aida_entity_types_p_at_1": {
+    "description": "P@1 on AIDA-CoNLL entity types (1016 PER, 1345 ORG, 1575 LOC, 542 MISC)",
+    "rows": [
+      {"method": "NS", "PER": [0.687, 0.030], "ORG": [0.410, 0.027], "LOC": [0.777, 0.021], "MISC": [0.292, 0.039]},
+      {"method": "PRWP", "PER": [0.719, 0.029], "ORG": [0.477, 0.026], "LOC": [0.752, 0.023], "MISC": [0.293, 0.042]},
+      {"method": "IScore", "PER": [0.786, 0.026], "ORG": [0.597, 0.026], "LOC": [0.694, 0.022], "MISC": [0.245, 0.035]},
+      {"method": "UIScore", "PER": [0.789, 0.026], "ORG": [0.601, 0.026], "LOC": [0.664, 0.023], "MISC": [0.232, 0.035]},
+      {"method": "mGENRE", "PER": [0.720, 0.027], "ORG": [0.608, 0.027], "LOC": [0.858, 0.018], "MISC": [0.284, 0.039]},
+      {"method": "Eigen (IScore)", "PER": [0.760, 0.026], "ORG": [0.732, 0.025], "LOC": [0.608, 0.024], "MISC": [0.205, 0.035]},
+      {"method": "Eigen", "PER": [0.696, 0.028], "ORG": [0.671, 0.026], "LOC": [0.655, 0.023], "MISC": [0.223, 0.035]}
+    ]
+  },
+  "table4_error_analysis": {
+    "description": "Error sources for UIScore on Quotebank",
+    "rows": [
+      {"error_source": "Similar domain", "mentions": 6, "pct": 42.9},
+      {"error_source": "Key property implicit in the text", "mentions": 4, "pct": 28.6},
+      {"error_source": "Key property not in Wikidata", "mentions": 3, "pct": 21.4},
+      {"error_source": "Decoy mention", "mentions": 1, "pct": 7.1}
+    ]
+  },
+  "table5_gt_distribution": {
+    "description": "Distribution of mentions in Quotebank ground truth",
+    "rows": [
+      {"category": "Unambiguous", "mentions": 1322, "pct": 70.8},
+      {"category": "Ambiguous / Gold entity exists", "mentions": 310, "pct": 16.6},
+      {"category": "Ambiguous / No correct QID in Wikidata", "mentions": 151, "pct": 8.1},
+      {"category": "Ambiguous / Impossible", "mentions": 37, "pct": 2.0},
+      {"category": "Ambiguous / Correct QID not listed", "mentions": 24, "pct": 1.3},
+      {"category": "Ambiguous / Not a person", "mentions": 22, "pct": 1.2},
+      {"category": "Total", "mentions": 1866, "pct": 100.0}
+    ]
+  },
+  "table6_iscore_ablation": {
+    "description": "IScore ablation over Wikidata features and normalization (P@1 / MRR). Best cells use stemming + D+S.",
+    "best": {"combination": "D + S", "normalization": "Stemming", "p_at_1": 0.918, "mrr": 0.952},
+    "note": "Full matrix in paper Appendix E.1 / local PDF. Reproduced via scores/fn_ablation_scores.pkl + code/experiments.py"
+  },
+  "table7_context_size": {
+    "description": "CSE / IScore narrow vs entire vs ensemble",
+    "rows": [
+      {"method": "CSE", "context": "Narrow", "p_at_1": 0.751, "mrr": 0.857},
+      {"method": "CSE", "context": "Entire", "p_at_1": 0.833, "mrr": 0.902},
+      {"method": "CSE", "context": "Ensemble", "p_at_1": 0.857, "mrr": 0.921},
+      {"method": "IScore", "context": "Narrow", "p_at_1": 0.898, "mrr": 0.941},
+      {"method": "IScore", "context": "Entire", "p_at_1": 0.918, "mrr": 0.952},
+      {"method": "IScore", "context": "Ensemble", "p_at_1": 0.922, "mrr": 0.954}
+    ]
+  },
+  "table8_mgenre_context": {
+    "description": "mGENRE P@1/MRR for context window t",
+    "rows": [
+      {"t": 64, "qb_p": 0.951, "qb_mrr": 0.968, "aida_p": 0.664, "aida_mrr": 0.713},
+      {"t": 128, "qb_p": 0.963, "qb_mrr": 0.976, "aida_p": 0.675, "aida_mrr": 0.723},
+      {"t": 256, "qb_p": 0.959, "qb_mrr": 0.972, "aida_p": 0.682, "aida_mrr": 0.730}
+    ],
+    "note": "Table 2 reports best P@1 (QB t=128, AIDA t=256). Computed historically in notebooks/aa.ipynb and mGENRE_context_sizes_eval.ipynb"
+  },
+  "table9_tie_breakers": {
+    "description": "P@1 of popularity metrics as tie-breakers for selected scorers (App. E.3). Protocol: score → TB → LQID (LQID column is TB alone).",
+    "columns": ["method", "NS", "NP", "PRWP", "PRWD", "LQID"],
+    "rows": [
+      {"method": "IScore", "NS": 0.918, "NP": 0.922, "PRWP": 0.918, "PRWD": 0.918, "LQID": 0.906},
+      {"method": "EEIScore", "NS": 0.898, "NP": 0.894, "PRWP": 0.906, "PRWD": 0.878, "LQID": 0.873},
+      {"method": "CSSVE", "NS": 0.784, "NP": 0.780, "PRWP": 0.784, "PRWD": 0.784, "LQID": 0.784},
+      {"method": "UIScore", "NS": 0.939, "NP": 0.939, "PRWP": 0.942, "PRWD": 0.935, "LQID": 0.931}
+    ],
+    "note": "CSE/UCSE omitted in paper (insensitive to TB). UIScore+PRWP evaluates to 0.943 with the Table-2 chain."
+  },
+  "table10_inference_times": {
+    "rows": [
+      {"method": "mGENRE", "quotebank": "8.0 s", "aida": "1.9 s"},
+      {"method": "NS", "quotebank": "15 µs", "aida": "26 µs"},
+      {"method": "IScore", "quotebank": "7.9 ms", "aida": "67 ms"},
+      {"method": "UIScore", "quotebank": "15 ms", "aida": "135 ms"},
+      {"method": "Eigen", "quotebank": "11 ms", "aida": "39 ms"}
+    ]
+  },
+  "table11_mrr": {
+    "description": "MRR companion to Table 2",
+    "rows": [
+      {"method": "Random", "qb_easy": 0.622, "qb_hard": 0.484, "qb_overall": 0.597, "aida_easy": 0.387, "aida_hard": 0.205, "aida_overall": 0.273},
+      {"method": "LQID", "qb_easy": 0.904, "qb_hard": 0.505, "qb_overall": 0.836, "aida_easy": 0.912, "aida_hard": 0.451, "aida_overall": 0.635},
+      {"method": "NP", "qb_easy": 0.959, "qb_hard": 0.457, "qb_overall": 0.873, "aida_easy": 0.901, "aida_hard": 0.352, "aida_overall": 0.603},
+      {"method": "NS", "qb_easy": 1.000, "qb_hard": 0.389, "qb_overall": 0.895, "aida_easy": 0.943, "aida_hard": 0.485, "aida_overall": 0.661},
+      {"method": "PRWD", "qb_easy": 0.873, "qb_hard": 0.453, "qb_overall": 0.801, "aida_easy": 0.903, "aida_hard": 0.336, "aida_overall": 0.601},
+      {"method": "PRWP", "qb_easy": 0.962, "qb_hard": 0.561, "qb_overall": 0.893, "aida_easy": 0.966, "aida_hard": 0.491, "aida_overall": 0.676},
+      {"method": "IScore", "qb_easy": 0.977, "qb_hard": 0.842, "qb_overall": 0.954, "aida_easy": 0.908, "aida_hard": 0.686, "aida_overall": 0.692},
+      {"method": "NIScore", "qb_easy": 0.980, "qb_hard": 0.750, "qb_overall": 0.941, "aida_easy": 0.903, "aida_hard": 0.538, "aida_overall": 0.651},
+      {"method": "CSE", "qb_easy": 0.947, "qb_hard": 0.682, "qb_overall": 0.902, "aida_easy": 0.871, "aida_hard": 0.455, "aida_overall": 0.612},
+      {"method": "EEIScore", "qb_easy": 0.972, "qb_hard": 0.801, "qb_overall": 0.943, "aida_easy": 0.555, "aida_hard": 0.467, "aida_overall": 0.435},
+      {"method": "CSSVE", "qb_easy": 0.930, "qb_hard": 0.586, "qb_overall": 0.871, "aida_easy": 0.796, "aida_hard": 0.412, "aida_overall": 0.559},
+      {"method": "UIScore", "qb_easy": 0.980, "qb_hard": 0.891, "qb_overall": 0.965, "aida_easy": 0.888, "aida_hard": 0.718, "aida_overall": 0.689},
+      {"method": "UCSE", "qb_easy": 0.970, "qb_hard": 0.743, "qb_overall": 0.931, "aida_easy": 0.874, "aida_hard": 0.630, "aida_overall": 0.659},
+      {"method": "Eigen (IScore)", "qb_easy": 0.974, "qb_hard": 0.817, "qb_overall": 0.947, "aida_easy": 0.864, "aida_hard": 0.804, "aida_overall": 0.697},
+      {"method": "Eigen", "qb_easy": 0.998, "qb_hard": 0.529, "qb_overall": 0.917, "aida_easy": 0.910, "aida_hard": 0.674, "aida_overall": 0.690},
+      {"method": "mGENRE", "qb_easy": 0.998, "qb_hard": 0.869, "qb_overall": 0.976, "aida_easy": 0.959, "aida_hard": 0.720, "aida_overall": 0.730}
+    ]
+  }
+}

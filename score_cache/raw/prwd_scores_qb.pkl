@@ -1,0 +1,1 @@
+/home/jovyan/gdrive-download/downloads/quotebank_el/score_cache/Quotebank/prwd_scores_qb.pkl
