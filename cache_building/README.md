@@ -1,70 +1,46 @@
-# Building NELight caches from a Wikidata dump
+# Building caches from Wikidata
 
-The 2021-11-01 Wikidata dump used in the paper is **not** bundled here.
-This directory reconstructs the builders. Unmodified originals (with their
-historical absolute paths) live under `original/`.
+The Wikidata dump used in the paper is not in this repo. Use these scripts to
+rebuild entity databases (and optional text embeddings) for Quotebank, AIDA, or
+your own data.
 
-Canonical cache names are documented in [`../caches/README.md`](../caches/README.md).
+## Steps
 
-## Pipeline
+1. Collect candidate Wikidata ids from your `data.json`
+2. Extract a subgraph + labels from a Wikidata dump
+3. Build `entity_kb.pkl` (optionally attach PageRank)
+4. Build unambiguous-mention lists
+5. Optionally embed text with BART (`build_text_embeddings.py`)
 
-```text
-data/{Quotebank,AIDA}/data.json
-        │
-        ▼
-collect_candidate_qids.py          → candidate_qids.pkl
-        │
-        ▼
-extract_wikidata_subgraph.py       → wikidata_subgraph.json.gz
-        │
-        ├──────────────────────────┐
-        ▼                          ▼
-extract_entity_metadata.py     build_token_representations.py
-  entity_metadata/               (optional Spark path)
-        │
-        ▼
-build_entity_kb.py                 → entity_kb.pkl
-        │
-        ├─→ build_unambiguous_mentions.py → unambiguous_mentions_*.pkl
-        │
-        └─→ build_text_embeddings.py
-              entity_embeddings.pkl
-              document_embeddings.pkl
-              mention_embeddings.pkl
-```
+## Quick run
 
-## Run (when a dump is available)
+Needs [uv](https://docs.astral.sh/uv/) and a
+[Wikidata JSON dump](https://dumps.wikimedia.org/wikidatawiki/entities/)
+(`*-all.json.gz`).
 
 ```bash
 DUMP=/path/to/wikidata-YYYYMMDD-all.json.gz bash cache_building/run_pipeline.sh
 ```
 
-Optional environment variables for first paragraphs / PageRank (used by
-`run_pipeline.sh` if you wire them in):
+Defaults read `data/Quotebank/data.json` and `data/AIDA/data.json`. For one
+custom file, set both inputs to the same path:
 
 ```bash
-export QID_PID=/path/to/qid_pid_mapping.json.bz2
-export FIRST_PARAGRAPHS=/path/to/first_paragraphs.jsonl.bz2
-export WP_RANKS=/path/to/wikipedia.ranks   # → entity field pagerank (PRWP)
-export WD_RANKS=/path/to/wikidata.ranks    # → entity field pagerank_wd (PRWD)
+DUMP=… DATA_QB=/path/to/data.json DATA_AIDA=/path/to/data.json OUT=artifacts/my_cache \
+  bash cache_building/run_pipeline.sh
 ```
 
-**PageRank sources used in the paper**
+Step-by-step `uv run` commands: see the README quickstart.
 
-- **PRWP (`pagerank`)** — Andreas Thalhammer’s public Wikipedia PageRank
-  (2021), e.g.
-  `https://danker.s3.amazonaws.com/2021-11-15.allwiki.links.rank.bz2`
-  ([index](https://danker.s3.amazonaws.com/index.html)).
-- **PRWD (`pagerank_wd`)** — Wikidata PageRank computed with
-  [danker](https://github.com/athalhammer/danker).
+## Optional inputs
 
-Rank files are TSV `qid_number<TAB>score` (no `Q` prefix). Pass them to
-`build_entity_kb.py` as `--wp-ranks` / `--wd-ranks`. More detail:
-`REPRODUCIBILITY.md` (Wikipedia and Wikidata PageRank).
+```bash
+export WP_RANKS=/path/to/wikipedia.ranks   # Wikipedia PageRank → PRWP
+export WD_RANKS=/path/to/wikidata.ranks    # Wikidata PageRank → PRWD
+export QID_PID=/path/to/qid_pid_mapping.json.bz2
+export FIRST_PARAGRAPHS=/path/to/first_paragraphs.jsonl.bz2
+```
 
-`build_text_embeddings.py` stores mask-mean-pooled vectors (`[n, 1, H]`);
-scorers already average over the token axis.
+PageRank download links and file format: **REPRODUCIBILITY.md**.
 
-## Source map
-
-See [`SOURCE_INDEX.md`](SOURCE_INDEX.md).
+Text embeddings need `uv sync --extra from-scratch` and (preferably) a GPU.

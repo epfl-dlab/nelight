@@ -219,6 +219,20 @@ def main():
                     help="Reuse existing eigen_raw_*.pkl for ns variant")
     args = ap.parse_args()
 
+    if not EIGEN_DIR.is_dir():
+        raise SystemExit(
+            f"Eigenthemes tree not found at {EIGEN_DIR}.\n"
+            "Place the original research checkout there (DeepWalk embeddings + "
+            "data/*_test_complete.json). Table reproduction does not need this — "
+            "Eigen scores are already in artifacts/from_scratch/*/ranked_scores.pkl.\n"
+            "See REPRODUCIBILITY.md § Eigenthemes."
+        )
+    if not EMB.exists():
+        raise SystemExit(
+            f"Missing DeepWalk embeddings at {EMB}.\n"
+            "See REPRODUCIBILITY.md § Eigenthemes."
+        )
+
     pop = load_pk(ROOT / "scores/popularity_scores.pkl")
     datasets = ["quotebank", "aida"] if args.dataset == "both" else [args.dataset]
     variants = ["ns", "iscore"] if args.variant == "both" else [args.variant]
@@ -226,6 +240,11 @@ def main():
     for dataset in datasets:
         tag = "quotebank_test_complete.json" if dataset == "quotebank" else "aida_test_complete.json"
         base_json = EIGEN_DIR / "data" / tag
+        if not base_json.exists():
+            raise SystemExit(
+                f"Missing {base_json}. Eigenthemes candidate JSON lists are not "
+                "shipped in this repo; copy them from the original research tree."
+            )
         eigen_base = json.load(open(base_json))
         ds_out = OUT / dataset
         ds_out.mkdir(parents=True, exist_ok=True)

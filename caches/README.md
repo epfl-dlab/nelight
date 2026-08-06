@@ -1,15 +1,14 @@
 # Caches
 
-Canonical files live under `caches/{quotebank,aida}/` (tracked with Git LFS).
+Large files under `caches/{quotebank,aida}/` (stored with Git LFS).
 
-| Path | Role |
+| File | Used for |
 |---|---|
-| `*/entity_kb.pkl` | Wikidata attributes + centrality (I/NI/EEIScore, NS, NP, PR*, LQID) |
-| `quotebank/entity_kb_aliases.pkl` | Alias-augmented KB (IScore ablations) |
-| `*/entity_embeddings.pkl` | BART entity property embeddings (CSE, CSSVE) |
-| `*/document_embeddings.pkl` | BART full-article embeddings (CSE) |
-| `*/mention_embeddings.pkl` | BART mention-sentence embeddings (NCSE) |
-| `*/unambiguous_mentions.pkl` | Per-article unambiguous QIDs (EEIScore, CSSVE) |
+| `entity_kb.pkl` | Popularity and text-overlap heuristics |
+| `entity_kb_aliases.pkl` | Quotebank IScore ablation (Table 6) |
+| `unambiguous_mentions.pkl` | EEIScore / CSSVE |
+| `entity_embeddings.pkl` | CSE / CSSVE |
+| `document_embeddings.pkl` | CSE |
+| `mention_embeddings.pkl` | NCSE |
 
-Path resolution: `runlib/cache_paths.py`. Rebuild from a Wikidata dump:
-`cache_building/README.md`.
+Rebuild from a Wikidata dump: `cache_building/README.md`.

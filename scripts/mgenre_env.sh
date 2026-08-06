@@ -1,13 +1,32 @@
 #!/usr/bin/env bash
-# Optional env for live mGENRE / Eigenthemes GPU runs.
-# Set FAIRSEQ_ROOT / CONDA_ENV as needed.
+# Activate the live-mGENRE environment created by scripts/setup_mgenre.sh.
+#
+# Usage:
+#   bash scripts/setup_mgenre.sh          # once
+#   source scripts/mgenre_env.sh
+#   python scripts/run_mgenre.py --dataset quotebank --context 128 --device cuda:0
 set -euo pipefail
-ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-FAIRSEQ_ROOT="${FAIRSEQ_ROOT:-$ROOT/workspace/speaker-disambiguation-quotebank/notebooks/fairseq/fairseq}"
-CONDA_ENV="${CONDA_ENV:-}"
-if [[ -n "$CONDA_ENV" && -f /opt/conda/etc/profile.d/conda.sh ]]; then
-  # shellcheck source=/dev/null
-  source /opt/conda/etc/profile.d/conda.sh
-  conda activate "$CONDA_ENV"
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+VENV="${MGENRE_VENV:-$ROOT/.venv-mgenre}"
+FAIRSEQ_ROOT="${FAIRSEQ_ROOT:-$ROOT/third_party/fairseq}"
+GENRE_ROOT="${GENRE_ROOT:-$ROOT/third_party/GENRE}"
+
+if [[ ! -x "$VENV/bin/python" ]]; then
+  echo "missing $VENV — run: bash scripts/setup_mgenre.sh" >&2
+  return 1 2>/dev/null || exit 1
 fi
+if [[ ! -d "$FAIRSEQ_ROOT/fairseq" ]]; then
+  echo "missing fairseq at $FAIRSEQ_ROOT — run: bash scripts/setup_mgenre.sh" >&2
+  return 1 2>/dev/null || exit 1
+fi
+
+# shellcheck disable=SC1091
+source "$VENV/bin/activate"
+export FAIRSEQ_ROOT
+export GENRE_ROOT
 export PYTHONPATH="${FAIRSEQ_ROOT}${PYTHONPATH:+:$PYTHONPATH}"
+
+echo "mGENRE env: $VENV"
+echo "FAIRSEQ_ROOT=$FAIRSEQ_ROOT"
+python -c "import torch; print('cuda', torch.cuda.is_available(), torch.cuda.get_device_name(0) if torch.cuda.is_available() else '')"

@@ -8,9 +8,8 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "runlib"))
 
-from cache_paths import CANONICAL, ensure_canonical_symlinks, resolve  # noqa: E402
+from runlib.cache_paths import CANONICAL, ensure_canonical_symlinks, resolve
 
 
 def check_caches() -> list[str]:
@@ -62,7 +61,6 @@ def check_scripts_import() -> list[str]:
         "scripts.reproduce_tables",
         "scripts.reproduce_paper_from_scratch",
         "scripts.reproduce_all_paper_tables",
-        "scripts.reproduce_remaining_tables",
     ]:
         # compile only — full import of reproduce_* executes helpers via exec
         path = ROOT / (mod.replace(".", "/") + ".py")

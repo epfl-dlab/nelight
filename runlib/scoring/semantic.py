@@ -11,8 +11,8 @@ from pywsd.utils import lemmatize_sentence
 from nltk import WordNetLemmatizer, PorterStemmer, TreebankWordTokenizer
 from nltk.tokenize.treebank import TreebankWordDetokenizer
 from nltk.corpus import stopwords
-from . import Scorer
-from utils.processing import *
+from runlib.scoring import Scorer
+from runlib.utils.processing import *
 
 class KnowledgeGraphSemanticScorer(Scorer):
     def score(self, name, article_content):

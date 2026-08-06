@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import argparse
 
-from io_utils import load_json, save_pickle
+from cache_building.io_utils import load_json, save_pickle
 
 
 def build_unambiguous(data: list) -> dict:

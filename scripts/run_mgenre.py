@@ -116,11 +116,29 @@ def run_sample(model, trie, sentence: str):
     return out[0]
 
 
+def _patch_torch_load_for_fairseq():
+    """fairseq checkpoints need ``weights_only=False`` (PyTorch ≥2.6 defaults to True)."""
+    import torch
+
+    if getattr(torch.load, "_nelight_weights_only_patch", False):
+        return
+    _orig = torch.load
+
+    def _load(*args, **kwargs):
+        kwargs.setdefault("weights_only", False)
+        return _orig(*args, **kwargs)
+
+    _load._nelight_weights_only_patch = True  # type: ignore[attr-defined]
+    torch.load = _load  # type: ignore[assignment]
+
+
 def run(dataset: str, context: int, device: str, limit: int | None, out: Path):
     import torch
     from transformers import MBartTokenizer
     from genre.fairseq_model import mGENRE
     from genre.trie import MarisaTrie, Trie
+
+    _patch_torch_load_for_fairseq()
 
     sys.modules["__main__"].MarisaTrie = MarisaTrie
     sys.modules["__main__"].Trie = Trie
@@ -227,7 +245,10 @@ def main():
     out = (
         Path(args.out)
         if args.out
-        else ROOT / "artifacts/from_scratch" / args.dataset / f"mGENRE_t{context}.pkl"
+        else ROOT
+        / "artifacts/from_scratch"
+        / args.dataset
+        / f"mGENRE_live_t{context}.pkl"
     )
     for path in (DEFAULT_MODEL / "model.pt", DEFAULT_TRIE, DEFAULT_T2W):
         if not path.exists():

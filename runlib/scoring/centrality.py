@@ -1,7 +1,7 @@
 import pickle
 import numpy as np
 
-from scoring import Scorer
+from runlib.scoring import Scorer
 
 class KnowledgeGraphCentralityScorer(Scorer):
     def score(self, name, article_content=None):

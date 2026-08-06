@@ -1,19 +1,9 @@
 #!/usr/bin/env python3
-"""Materialize mGENRE Table-2 scores from original method dumps + document conversion.
+"""Copy saved mGENRE scores into artifacts/from_scratch/ for table scripts.
 
-Two artifacts are written per dataset:
-
-1. **Exact Table-2 scores** (bit-identical to ``score_cache`` / paper):
-   copied from ``genre_context_scores_{qb,aida}.pkl`` at the paper-best context.
-
-2. **Reconstructed from raw beams** (``genre_context_scores_all.pkl``), using the
-   ``mGENRE_context_sizes_eval.ipynb`` cell-10 aggregation quirk and a
-   deterministic ``max(QID)`` title→QID map (same as ``aa.ipynb`` ``text_to_id``).
-   This recovers Quotebank overall P@1 = 0.963 (paper). Vector equality to the
-   cache is ~542–545/546 because a few titles map to multiple QIDs and the
-   historical ``list(set)[0]`` order is not recoverable across Python versions.
-
-Live re-runs: ``scripts/run_mgenre.py`` (no ``marginalize``, cell-10 quirk, max QID).
+Reads score_cache/raw/genre_context_scores_{qb,aida}.pkl and writes
+mGENRE_t{64,128,256}.pkl plus mGENRE_best.pkl. For a live GPU re-run, use
+scripts/setup_mgenre.sh and scripts/run_mgenre.py instead.
 """
 
 from __future__ import annotations
@@ -26,21 +16,10 @@ import shutil
 from pathlib import Path
 
 import numpy as np
-import torch
 
 ROOT = Path(__file__).resolve().parents[1]
-# Optional raw beams for protocol reconstruction (exact Table-2 uses CACHE_*).
-RAW = next(
-    (
-        p
-        for p in (
-            ROOT / "score_cache/raw/genre_context_scores_all.pkl",
-            ROOT / "workspace/quotebank_el/genre_context_scores_all.pkl",
-        )
-        if p.exists()
-    ),
-    ROOT / "score_cache/raw/genre_context_scores_all.pkl",
-)
+# Optional local raw beams for protocol reconstruction (exact Table-2 uses CACHE_*).
+RAW = ROOT / "score_cache/raw/genre_context_scores_all.pkl"
 T2W = ROOT / "models/mgenre/lang_title2wikidataID-normalized_with_redirect.pkl"
 CACHE_QB = ROOT / "score_cache/raw/genre_context_scores_qb.pkl"
 CACHE_AIDA = ROOT / "score_cache/raw/genre_context_scores_aida.pkl"
@@ -49,8 +28,12 @@ OUT_AIDA = ROOT / "artifacts/from_scratch/aida"
 
 
 class CPUUnpickler(pickle.Unpickler):
+    """Unpickle torch tensors from raw beam dumps (requires the ``mgenre`` / ``from-scratch`` extra)."""
+
     def find_class(self, module, name):
         if module == "torch.storage" and name == "_load_from_bytes":
+            import torch
+
             return lambda b: torch.load(io.BytesIO(b), map_location="cpu", weights_only=False)
         return super().find_class(module, name)
 

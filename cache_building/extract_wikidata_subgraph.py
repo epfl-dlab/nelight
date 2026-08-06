@@ -20,7 +20,7 @@ import json
 
 from tqdm import tqdm
 
-from io_utils import load_pickle
+from cache_building.io_utils import load_pickle
 
 
 def main():

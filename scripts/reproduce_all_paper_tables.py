@@ -278,8 +278,8 @@ def table7():
     ov = qb_overall_gt()
     ns = normalize_scores(load_pk(FS / "quotebank/NS.pkl"))
     lqid = normalize_scores(load_pk(FS / "quotebank/LQID.pkl"))
-    cse = normalize_scores(load_pk(SC / "cse_scores_qb.pkl"))
-    ncse = normalize_scores(load_pk(SC / "ncse_scores_qb.pkl"))
+    cse = normalize_scores(load_pk(SC / "Quotebank" / "cse_scores_qb.pkl"))
+    ncse = normalize_scores(load_pk(SC / "Quotebank" / "ncse_scores_qb.pkl"))
     iscore = normalize_scores(load_pk(FS / "quotebank/IScore.pkl"))
     niscore = normalize_scores(load_pk(FS / "quotebank/NIScore.pkl"))
 
@@ -412,9 +412,8 @@ def table10(measure_local: bool = False):
     if measure_local:
         # Rough local micro-benchmark (not comparable to paper hardware).
         data_q = load_json(ROOT / "data/Quotebank/data.json")
-        sys.path.insert(0, str(ROOT / "runlib"))
-        from cache_paths import resolve as resolve_cache  # type: ignore
-        from scoring.centrality import WikidataCentralityScorer  # type: ignore
+        from runlib.cache_paths import resolve as resolve_cache
+        from runlib.scoring.centrality import WikidataCentralityScorer
 
         wiki = load_pk(resolve_cache("quotebank", "entity_kb"))
         scorer = WikidataCentralityScorer("n_sitelinks", wiki_cache=wiki)

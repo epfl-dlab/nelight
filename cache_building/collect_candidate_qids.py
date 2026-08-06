@@ -16,7 +16,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from io_utils import load_json, save_pickle
+from cache_building.io_utils import load_json, save_pickle
 
 
 def collect_qids(data: list) -> set[str]:

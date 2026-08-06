@@ -8,27 +8,26 @@ venv/
 .pytest_cache/
 .ipynb_checkpoints/
 
-# Runtime logs and local model weights
+# Runtime logs and optional local assets
 logs/
 models/
 *.log
-
-# Optional research trees (not required for table reproduction)
 workspace/
 workspace_code/
 notebooks/
+docs/
+third_party/
+.venv-mgenre/
 
-# Legacy cache symlink targets (canonical files are under caches/{quotebank,aida}/)
-caches/Quotebank
-caches/aida_raw
-caches/workspace_caches
-caches/unambiguous_cache.pkl
-caches/eigenthemes/
-
-# Large optional artifacts; regenerate with scripts/
+# Regenerated / large optional intermediates
 artifacts/cache_build/
-artifacts/from_scratch/**/mGENRE_live_*.pkl
+artifacts/audit_*/
+artifacts/my_*/
+artifacts/from_scratch/**/mGENRE_live_*
+artifacts/from_scratch/**/mGENRE_from_raw_*
 artifacts/from_scratch/**/*.meta.json
+artifacts/from_scratch/eigen_*
+artifacts/from_scratch/summary.json
 
 # OS / editor
 .DS_Store

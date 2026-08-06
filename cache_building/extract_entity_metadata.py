@@ -21,7 +21,7 @@ from pathlib import Path
 
 from tqdm import tqdm
 
-from io_utils import iter_wikidata_dump, load_pickle, qtoi, save_pickle
+from cache_building.io_utils import iter_wikidata_dump, load_pickle, qtoi, save_pickle
 
 
 def main():

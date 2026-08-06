@@ -1,6 +1,4 @@
 import numpy as np
-from scoring.evaluation import *
-from itertools import groupby
 import scipy.stats as ss
 
 

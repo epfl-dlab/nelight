@@ -1,6 +1,0 @@
-# Live mGENRE GPU re-runs (in addition to a GENRE/fairseq install; see REPRODUCIBILITY.md).
--r requirements-repro.txt
-torch>=1.10
-transformers>=4.20
-tqdm>=4.60
-marisa-trie>=0.7

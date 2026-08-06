@@ -1,38 +1,39 @@
 # NELight
 
-Code and evaluation for
+Code and data for
 **[Strong Heuristics for Named Entity Linking](https://aclanthology.org/2022.naacl-srw.30/)**
 (Čuljak et al., NAACL SRW 2022).
 
-## Rebuild the paper tables
+## Reproduce the paper tables
 
-The repo includes the score files from the original experiments. To recompute
-Tables 1–11 (including AIDA entity types and the appendix):
+Needs [uv](https://docs.astral.sh/uv/) and [Git LFS](https://git-lfs.com/)
+(large data files).
 
 ```bash
+git clone https://github.com/epfl-dlab/nelight.git
+cd nelight
 git lfs install && git lfs pull
-pip install -r requirements-repro.txt
+uv sync
 bash scripts/reproduce_all.sh
 ```
 
-No GPU. Details, how to re-run each method yourself, installs, and known typos
-in the PDF: **[REPRODUCIBILITY.md](REPRODUCIBILITY.md)**.
+No GPU. Writes `artifacts/all_paper_tables.json` (Tables 1–11).
 
-## Quickstart: heuristics on your data
+More detail, re-running methods, and known typos in the PDF:
+**[REPRODUCIBILITY.md](REPRODUCIBILITY.md)**.
 
-Build entity caches from a Wikidata dump, then run popularity + I/NI/EEIScore +
-UIScore on your own mentions.
+## Use on your own data
 
-### 1. Format the input
+Build an entity database from Wikidata, then score mentions with the paper’s
+popularity and text-overlap heuristics (not the embedding-based ones).
 
-One JSON list of articles. Each mention lists candidate Wikidata QIDs (and
-offsets in the document text):
+**1. Format.** A JSON list of articles:
 
 ```json
 [
   {
     "articleID": "doc-1",
-    "content": "full document text …",
+    "content": "… full document text …",
     "names": [
       {
         "name": "paris0",
@@ -44,57 +45,42 @@ offsets in the document text):
 ]
 ```
 
-`name` is a unique mention key within the article (paper data often appends an
-index). Gold labels for evaluation are optional (see `--easy` / `--hard` /
-`--overall` below); scoring only needs `data.json`.
+Each `name` should be unique within the article. `ids` are Wikidata candidate
+ids. `offsets` are word spans in `content` (split on spaces).
 
-### 2. Build caches
-
-Needs a [Wikidata JSON dump](https://dumps.wikimedia.org/wikidatawiki/entities/)
-(`*-all.json.gz`). Optional PageRank files improve PRWP / PRWD (see
-`cache_building/README.md`).
+**2. Build caches** (needs a
+[Wikidata dump](https://dumps.wikimedia.org/wikidatawiki/entities/)):
 
 ```bash
-pip install -r requirements-from-scratch.txt
-export PYTHONPATH=cache_building${PYTHONPATH:+:$PYTHONPATH}
+uv sync --extra from-scratch
 export DUMP=/path/to/wikidata-YYYYMMDD-all.json.gz
 export DATA=/path/to/your/data.json
 export OUT=artifacts/my_cache
 
-python3 cache_building/collect_candidate_qids.py \
+uv run python cache_building/collect_candidate_qids.py \
   --data "$DATA" --out "$OUT/candidate_qids.pkl"
-
-python3 cache_building/extract_wikidata_subgraph.py \
+uv run python cache_building/extract_wikidata_subgraph.py \
   --dump "$DUMP" --qids "$OUT/candidate_qids.pkl" \
   --out "$OUT/wikidata_subgraph.json.gz"
-
-python3 cache_building/extract_entity_metadata.py \
+uv run python cache_building/extract_entity_metadata.py \
   --dump "$DUMP" --qids "$OUT/candidate_qids.pkl" \
   --out-dir "$OUT/entity_metadata"
-
-# Optional: WP_RANKS=… WD_RANKS=… FIRST_PARAGRAPHS=… QID_PID=…
-python3 cache_building/build_entity_kb.py \
+uv run python cache_building/build_entity_kb.py \
   --dump "$OUT/wikidata_subgraph.json.gz" \
   --labels-dir "$OUT/entity_metadata" \
   --qids "$OUT/candidate_qids.pkl" \
   --out "$OUT/entity_kb.pkl"
-
-python3 cache_building/build_unambiguous_mentions.py \
+uv run python cache_building/build_unambiguous_mentions.py \
   --data "$DATA" --out "$OUT/unambiguous_mentions.pkl"
 ```
 
-Or point the bundled pipeline at your file (it still takes two `--data` slots,
-pass the same path twice):
+Or: `DUMP=… DATA_QB="$DATA" DATA_AIDA="$DATA" OUT=… bash cache_building/run_pipeline.sh`  
+(PageRank and related options: `cache_building/README.md`.)
+
+**3. Score:**
 
 ```bash
-DUMP=… DATA_QB="$DATA" DATA_AIDA="$DATA" OUT=artifacts/my_cache \
-  bash cache_building/run_pipeline.sh
-```
-
-### 3. Run heuristics
-
-```bash
-PYTHONPATH=runlib python3 scripts/run_heuristics.py \
+uv run --extra from-scratch python scripts/run_heuristics.py \
   --data "$DATA" \
   --entity-kb "$OUT/entity_kb.pkl" \
   --unambiguous "$OUT/unambiguous_mentions.pkl" \
@@ -103,35 +89,16 @@ PYTHONPATH=runlib python3 scripts/run_heuristics.py \
   --out artifacts/my_run
 ```
 
-Writes `artifacts/my_run/mydata/{LQID,NP,NS,PRWD,PRWP,IScore,NIScore,EEIScore}.pkl`
-and `ranked_scores.pkl`. `--protocol aida` uses raw argmax (good default);
-`--protocol quotebank` applies the paper’s popularity tie-breaks.
+Optional gold labels for accuracy: `--easy` / `--hard` / `--overall`
+(JSON maps `{articleID: {mention: gold_candidate_index}}`).
 
-If you have gold maps `{articleID: {mention: gold_candidate_index}}`:
+## What’s in the repo
 
-```bash
-PYTHONPATH=runlib python3 scripts/run_heuristics.py \
-  --data "$DATA" --entity-kb "$OUT/entity_kb.pkl" \
-  --unambiguous "$OUT/unambiguous_mentions.pkl" \
-  --protocol aida --name mydata \
-  --easy /path/to/easy.json --hard /path/to/hard.json \
-  --out artifacts/my_run
-```
-
-## Re-running methods (optional)
-
-| Method | Command | Install |
-|---|---|---|
-| Popularity, I/NI/EEIScore, UIScore | `PYTHONPATH=runlib python3 scripts/run_heuristics.py --dataset both` | `requirements-from-scratch.txt` |
-| CSE / NCSE / CSSVE / UCSE | same, with `--with-embeddings` | + embedding caches via LFS |
-| mGENRE (use saved scores) | `python3 scripts/convert_mgenre_raw.py` | `requirements-repro.txt` |
-| mGENRE (run the model again) | `python scripts/run_mgenre.py --dataset quotebank --context 128` | see REPRODUCIBILITY.md §5 |
-| Eigenthemes | `python3 scripts/run_eigenthemes.py --dataset both --reuse-raw` | see REPRODUCIBILITY.md §6 |
-
-| Path | Contents |
+| Path | What it is |
 |---|---|
-| `paper/tables/paper_tables.json` | Numbers as printed in the paper |
-| `artifacts/all_paper_tables.json` | What the scripts produce |
-| `caches/{quotebank,aida}/` | Entity KB and BART embeddings (Git LFS) |
-| `score_cache/raw/` | Saved per-method scores |
+| `data/` | Quotebank and AIDA evaluation sets |
+| `score_cache/` | Saved method scores from the paper runs |
+| `caches/` | Entity databases and text embeddings (Git LFS) |
+| `scripts/` | Table builders and method runners |
 | `cache_building/` | Rebuild caches from a Wikidata dump |
+| `paper/` | PDF and machine-readable table numbers |

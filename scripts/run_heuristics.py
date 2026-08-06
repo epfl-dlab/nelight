@@ -11,18 +11,16 @@ from __future__ import annotations
 import argparse
 import json
 import pickle
-import sys
 from pathlib import Path
 
 import numpy as np
 import scipy.stats as ss
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "runlib"))
 
-from cache_paths import ensure_canonical_symlinks, resolve as resolve_cache  # noqa: E402
-from scoring.centrality import WikidataCentralityScorer  # noqa: E402
-from scoring.semantic import (  # noqa: E402
+from runlib.cache_paths import ensure_canonical_symlinks, resolve as resolve_cache
+from runlib.scoring.centrality import WikidataCentralityScorer
+from runlib.scoring.semantic import (
     EntityContentSimilarityScorer,
     EntityEntitySimilarityScorer,
 )

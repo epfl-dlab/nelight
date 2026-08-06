@@ -26,7 +26,6 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import sys
 from pathlib import Path
 
 import torch
@@ -34,10 +33,9 @@ from tqdm import tqdm
 from transformers import BartModel, BartTokenizer
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "cache_building" / "original" / "utils"))
-sys.path.insert(0, str(ROOT / "runlib"))
 
-from io_utils import load_json, load_pickle, save_pickle  # noqa: E402
+from cache_building.io_utils import load_json, load_pickle, save_pickle
+from runlib.utils.processing import sentences_with_name
 
 SKIP_PROPS = {"n_sitelinks", "pagerank", "pagerank_wd", "n_statements"}
 
@@ -148,8 +146,6 @@ def build_document(data_path, out, device):
 
 def build_mention(data_path, out, device):
     """Embed mention sentences; store pooled ``[n_sents, 1, H]``."""
-    from processing import sentences_with_name  # type: ignore
-
     data = load_json(data_path)
     tok, model = load_model(device)
     emb = {}
