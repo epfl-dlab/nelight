@@ -1,0 +1,7 @@
+# From-scratch heuristics + embedding scorers (+ BART cache rebuild).
+-r requirements-repro.txt
+torch>=1.10
+transformers>=4.20
+tqdm>=4.60
+nltk>=3.6
+pywsd>=1.2

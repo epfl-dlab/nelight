@@ -3,7 +3,7 @@
 
 Critical details (must match published score caches):
   * Do **not** pass marginalize=True — raw beams keep ``{text, score}``.
-  * Map ``title >> lang`` → QID with ``list(lang_title2wikidataID[key])[0]``.
+  * Map ``title >> lang`` → QID with ``max(ids, key=lambda y: int(y[1:]))``.
   * Quotebank: sum across offsets using the cell-10 ``cache.add`` quirk
     (first offset: first beam hit only; later offsets: sum all beam hypos for known QIDs).
   * AIDA: one mention → first beam hit per QID, then align to candidate list.
@@ -207,7 +207,7 @@ def run(dataset: str, context: int, device: str, limit: int | None, out: Path):
         "n_model_calls": n_calls,
         "infer_seconds": round(t_infer, 2),
         "sec_per_call": round(t_infer / n_calls, 3) if n_calls else None,
-        "protocol": "no-marginalize; list0 QID; QB cell10 quirk",
+        "protocol": "no-marginalize; max-QID; QB cell10 quirk",
         "out": str(out),
     }
     with open(out.with_suffix(".meta.json"), "w") as f:
