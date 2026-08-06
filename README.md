@@ -18,6 +18,107 @@ bash scripts/reproduce_all.sh
 No GPU. Details, how to re-run each method yourself, installs, and known typos
 in the PDF: **[REPRODUCIBILITY.md](REPRODUCIBILITY.md)**.
 
+## Quickstart: your data (heuristics, no embeddings)
+
+Build entity caches from a Wikidata dump, then run popularity + I/NI/EEIScore +
+UIScore on your own mentions. This path does **not** cover CSE / NCSE / CSSVE /
+UCSE (those need BART embedding caches).
+
+### 1. Format the input
+
+One JSON list of articles. Each mention lists candidate Wikidata QIDs (and
+offsets in the document text):
+
+```json
+[
+  {
+    "articleID": "doc-1",
+    "content": "full document text …",
+    "names": [
+      {
+        "name": "paris0",
+        "ids": ["Q90", "Q142"],
+        "offsets": [[12, 17]]
+      }
+    ]
+  }
+]
+```
+
+`name` is a unique mention key within the article (paper data often appends an
+index). Gold labels for evaluation are optional (see `--easy` / `--hard` /
+`--overall` below); scoring only needs `data.json`.
+
+### 2. Build caches
+
+Needs a [Wikidata JSON dump](https://dumps.wikimedia.org/wikidatawiki/entities/)
+(`*-all.json.gz`). Optional PageRank files improve PRWP / PRWD (see
+`cache_building/README.md`).
+
+```bash
+pip install -r requirements-from-scratch.txt
+export PYTHONPATH=cache_building${PYTHONPATH:+:$PYTHONPATH}
+export DUMP=/path/to/wikidata-YYYYMMDD-all.json.gz
+export DATA=/path/to/your/data.json
+export OUT=artifacts/my_cache
+
+python3 cache_building/collect_candidate_qids.py \
+  --data "$DATA" --out "$OUT/candidate_qids.pkl"
+
+python3 cache_building/extract_wikidata_subgraph.py \
+  --dump "$DUMP" --qids "$OUT/candidate_qids.pkl" \
+  --out "$OUT/wikidata_subgraph.json.gz"
+
+python3 cache_building/extract_entity_metadata.py \
+  --dump "$DUMP" --qids "$OUT/candidate_qids.pkl" \
+  --out-dir "$OUT/entity_metadata"
+
+# Optional: WP_RANKS=… WD_RANKS=… FIRST_PARAGRAPHS=… QID_PID=…
+python3 cache_building/build_entity_kb.py \
+  --dump "$OUT/wikidata_subgraph.json.gz" \
+  --labels-dir "$OUT/entity_metadata" \
+  --qids "$OUT/candidate_qids.pkl" \
+  --out "$OUT/entity_kb.pkl"
+
+python3 cache_building/build_unambiguous_mentions.py \
+  --data "$DATA" --out "$OUT/unambiguous_mentions.pkl"
+```
+
+Or point the bundled pipeline at your file (it still takes two `--data` slots;
+pass the same path twice):
+
+```bash
+DUMP=… DATA_QB="$DATA" DATA_AIDA="$DATA" OUT=artifacts/my_cache \
+  bash cache_building/run_pipeline.sh
+```
+
+### 3. Run heuristics
+
+```bash
+PYTHONPATH=runlib python3 scripts/run_heuristics.py \
+  --data "$DATA" \
+  --entity-kb "$OUT/entity_kb.pkl" \
+  --unambiguous "$OUT/unambiguous_mentions.pkl" \
+  --protocol aida \
+  --name mydata \
+  --out artifacts/my_run
+```
+
+Writes `artifacts/my_run/mydata/{LQID,NP,NS,PRWD,PRWP,IScore,NIScore,EEIScore}.pkl`
+and `ranked_scores.pkl`. `--protocol aida` uses raw argmax (good default);
+`--protocol quotebank` applies the paper’s popularity tie-breaks.
+
+If you have gold maps `{articleID: {mention: gold_candidate_index}}`:
+
+```bash
+PYTHONPATH=runlib python3 scripts/run_heuristics.py \
+  --data "$DATA" --entity-kb "$OUT/entity_kb.pkl" \
+  --unambiguous "$OUT/unambiguous_mentions.pkl" \
+  --protocol aida --name mydata \
+  --easy /path/to/easy.json --hard /path/to/hard.json \
+  --out artifacts/my_run
+```
+
 ## Re-running methods (optional)
 
 | Method | Command | Install |
