@@ -18,11 +18,10 @@ bash scripts/reproduce_all.sh
 No GPU. Details, how to re-run each method yourself, installs, and known typos
 in the PDF: **[REPRODUCIBILITY.md](REPRODUCIBILITY.md)**.
 
-## Quickstart: your data (heuristics, no embeddings)
+## Quickstart: heuristics on your data
 
 Build entity caches from a Wikidata dump, then run popularity + I/NI/EEIScore +
-UIScore on your own mentions. This path does **not** cover CSE / NCSE / CSSVE /
-UCSE (those need BART embedding caches).
+UIScore on your own mentions.
 
 ### 1. Format the input
 
@@ -84,7 +83,7 @@ python3 cache_building/build_unambiguous_mentions.py \
   --data "$DATA" --out "$OUT/unambiguous_mentions.pkl"
 ```
 
-Or point the bundled pipeline at your file (it still takes two `--data` slots;
+Or point the bundled pipeline at your file (it still takes two `--data` slots,
 pass the same path twice):
 
 ```bash
