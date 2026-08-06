@@ -1,1 +1,3 @@
-/home/jovyan/gdrive-download/downloads/quotebank_el/score_cache/AIDA/iscore_scores.pkl
+version https://git-lfs.github.com/spec/v1
+oid sha256:d3a36f195277c6f8960d866a763e043248d1d0096ffa33f499c02358ac1d9cc8
+size 753514

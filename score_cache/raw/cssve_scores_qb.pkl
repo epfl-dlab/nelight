@@ -1,1 +1,3 @@
-/home/jovyan/gdrive-download/downloads/quotebank_el/score_cache/Quotebank/cssve_scores_qb.pkl
+version https://git-lfs.github.com/spec/v1
+oid sha256:7761a2d63c15012a31fba44b63df33f825db02efd1fc94a5054aeba1e35aa53c
+size 54662

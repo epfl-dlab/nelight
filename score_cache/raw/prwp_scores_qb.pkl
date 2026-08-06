@@ -1,1 +1,3 @@
-/home/jovyan/gdrive-download/downloads/quotebank_el/score_cache/Quotebank/prwp_scores_qb.pkl
+version https://git-lfs.github.com/spec/v1
+oid sha256:d8fd647f7bca67df16f83e79d6dc5758d5238a9b53082436541a9675848dfed4
+size 54628

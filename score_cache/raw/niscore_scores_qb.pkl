@@ -1,1 +1,3 @@
-/home/jovyan/gdrive-download/downloads/quotebank_el/score_cache/Quotebank/niscore_scores_qb.pkl
+version https://git-lfs.github.com/spec/v1
+oid sha256:e94e016e03cab021702735095aedccdc32b95a2d28760ddb17a831abb1798ecb
+size 54628

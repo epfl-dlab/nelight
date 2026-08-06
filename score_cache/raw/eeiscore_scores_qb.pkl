@@ -1,1 +1,3 @@
-/home/jovyan/gdrive-download/downloads/quotebank_el/score_cache/Quotebank/eeiscore_scores_qb.pkl
+version https://git-lfs.github.com/spec/v1
+oid sha256:98bc36cde437ffe0c381e196d57263161d81cba02f6aacb069a0a3d00b81373f
+size 54628
