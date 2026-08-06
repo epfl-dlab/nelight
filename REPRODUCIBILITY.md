@@ -2,11 +2,24 @@
 
 [Čuljak et al., NAACL SRW 2022](https://aclanthology.org/2022.naacl-srw.30/)
 
-This document covers **dump-based** table reproduction (exact paper numbers,
-aside from documented print errors) and **from-scratch** re-runs of every
-method family.
+## Two ways to reproduce
 
-## 1. Setup
+**1. Evaluate saved scores (default).**  
+When the paper was written, each method wrote out a score file per mention
+(pickles under `score_cache/`). The table scripts just load those files and
+compute P@1 / MRR. That is enough to rebuild Tables 1–11 and match the paper
+(except the print mistakes listed at the end). No GPU.
+
+**2. Re-run a method yourself.**  
+You can also recompute scores with the code in this repo (heuristics, BART
+embeddings, mGENRE, Eigenthemes). That is slower and may need a GPU. For
+mGENRE especially, a new run on a modern stack will not produce *identical*
+floating-point beams to 2022, but the chosen entity is almost always the same.
+Use the saved score files if you care about matching the published digits.
+
+---
+
+## Setup
 
 ```bash
 git clone git@github.com:epfl-dlab/nelight.git
@@ -15,83 +28,80 @@ git lfs install
 git lfs pull
 ```
 
-### Dependencies by path
+### What to install
 
-| Path | Install | Extra assets |
+| What you want to do | Install | Also need |
 |---|---|---|
-| Dump-based Tables 1–11 | `pip install -r requirements-repro.txt` | shipped `score_cache/`, `scores/`, `data/`, `caches/` (LFS) |
-| Heuristics + CSE family | `pip install -r requirements-from-scratch.txt` then `python -c "import nltk; nltk.download('punkt'); nltk.download('wordnet'); nltk.download('omw-1.4'); nltk.download('stopwords')"` | shipped `caches/` |
-| Rebuild BART embeddings | same as heuristics | GPU recommended |
-| mGENRE live | §5 below | checkpoint + trie + title map under `models/mgenre/` |
-| Eigenthemes live | §6 below | DeepWalk pickle + candidate JSONs under `workspace/eigenthemes/` |
+| Rebuild all paper tables from saved scores | `pip install -r requirements-repro.txt` | files already in the repo (`score_cache/`, `scores/`, `data/`, `caches/` via LFS) |
+| Re-run heuristics / embedding scorers | `pip install -r requirements-from-scratch.txt` and download NLTK data (see §3) | `caches/` |
+| Rebuild BART embedding caches | same as heuristics | a GPU helps |
+| Re-run mGENRE on GPU | see §5 (fairseq + GENRE + downloads) | lots of RAM for the title map |
+| Re-run Eigenthemes | see §6 | `workspace/eigenthemes/` from the original research tree |
 
-Python **3.9+** is fine for dump-based / heuristics. Live mGENRE needs the
-GENRE fairseq fork (typically Python 3.8–3.10).
+Use Python 3.9+ for the table scripts and heuristics. mGENRE’s fairseq fork is
+happiest on 3.8–3.10.
 
-## 2. Dump-based: all paper tables (recommended)
+---
 
-Exact Table-2 / appendix numbers from frozen method dumps (no GPU):
+## Rebuild Tables 1–11 from saved scores
 
 ```bash
 pip install -r requirements-repro.txt
 bash scripts/reproduce_all.sh
-# or:
-python3 scripts/reproduce_all_paper_tables.py
 ```
 
-Writes `artifacts/all_paper_tables.json`. Coverage:
+Output: `artifacts/all_paper_tables.json`.
 
-| Table | Content |
+| Table | What it is |
 |---|---|
-| 1 | Dataset difficulty splits |
-| 2 | Main P@1 |
-| 3 | **Type-based** AIDA P@1 (PER/ORG/LOC/MISC) |
-| 4 | UIScore error analysis (count; categories qualitative) |
-| 5 | Quotebank GT ambiguity distribution |
-| 6 | IScore feature/normalization ablation |
-| 7 | CSE / IScore narrow vs entire vs ensemble |
-| 8 | mGENRE context windows |
-| 9 | Popularity tie-breakers |
-| 10 | Inference times (paper hardware, reported as-is) |
-| 11 | MRR companion to Table 2 |
+| 1 | Easy / hard / overall mention counts |
+| 2 | Main P@1 results |
+| 3 | AIDA P@1 by entity type (PER / ORG / LOC / MISC) |
+| 4 | UIScore errors on Quotebank (we check the count; the category labels in the paper are manual) |
+| 5 | How ambiguous Quotebank gold mentions are |
+| 6 | IScore ablation (which Wikidata fields / normalization) |
+| 7 | Narrow vs full-document context for CSE and IScore |
+| 8 | mGENRE at different context widths |
+| 9 | Which popularity signal to use as a tie-breaker |
+| 10 | Runtime on the paper’s hardware (we only report those numbers) |
+| 11 | MRR for the same methods as Table 2 |
 
-Cross-checks: `scripts/reproduce_tables.py`, `scripts/reproduce_remaining_tables.py`,
-`scripts/reproduce_paper_from_scratch.py` (uses from-scratch artifacts when present,
-else dumps).
+---
 
-## 3. From-scratch: popularity + I/NI/EEIScore + UIScore
+## Re-run heuristics (popularity, IScore, NIScore, EEIScore, UIScore)
 
 ```bash
 pip install -r requirements-from-scratch.txt
-# NLTK data (once):
 python -c "import nltk; nltk.download('punkt'); nltk.download('wordnet'); nltk.download('omw-1.4'); nltk.download('stopwords')"
 
 PYTHONPATH=runlib python3 scripts/run_heuristics.py --dataset both
 python3 scripts/reproduce_paper_from_scratch.py
 ```
 
-Uses `caches/{quotebank,aida}/entity_kb.pkl` and `unambiguous_mentions.pkl`.
-**Quotebank** applies method-specific popularity TB → LQID; **AIDA** uses raw
-`argmax` (no popularity TB). Outputs: `artifacts/from_scratch/{quotebank,aida}/`.
+This reads `caches/{quotebank,aida}/entity_kb.pkl` and `unambiguous_mentions.pkl`.
+On Quotebank, ties are broken with a popularity score then LQID (see §7).
+On AIDA there is no popularity tie-break—just `argmax`.
+Scores land in `artifacts/from_scratch/{quotebank,aida}/`.
 
-## 4. From-scratch: CSE / NCSE / CSSVE / UCSE
+---
+
+## Re-run embedding scorers (CSE, NCSE, CSSVE, UCSE)
 
 ```bash
 PYTHONPATH=runlib python3 scripts/run_heuristics.py --dataset both --with-embeddings
 ```
 
-Needs `caches/*/entity_embeddings.pkl`, `document_embeddings.pkl`,
-`mention_embeddings.pkl` (Git LFS).
+Needs the BART caches in `caches/*/` (`entity_embeddings.pkl`,
+`document_embeddings.pkl`, `mention_embeddings.pkl`).
 
-**Paper-exact AIDA CSE family** in Table 2 still uses `score_cache/raw/AIDA/*`
-dumps inside `reproduce_paper_from_scratch.py` (reconstructed pooled BART caches
-match CSE/UCSE; CSSVE can drift ~1pp). Quotebank embedding scores match from
-shipped caches.
+For AIDA, the Table 2 comparison script still loads the original CSE/CSSVE/UCSE
+score files from `score_cache/raw/AIDA/`. Recomputing from our rebuilt AIDA
+embeddings matches CSE and UCSE; CSSVE can be off by about one point. Quotebank
+embedding scores match the paper from the shipped caches.
 
-### Rebuild BART caches (optional)
+### Optional: rebuild the BART caches
 
 ```bash
-pip install -r requirements-from-scratch.txt
 python cache_building/build_text_embeddings.py document \
   --data data/AIDA/data.json --out caches/aida/document_embeddings.pkl --device cuda:0
 python cache_building/build_text_embeddings.py mention \
@@ -100,54 +110,62 @@ python cache_building/build_text_embeddings.py entity \
   --entity-kb caches/aida/entity_kb.pkl --out caches/aida/entity_embeddings.pkl --device cuda:0
 ```
 
-Entity/document/mention builders store **mask-mean-pooled** `[n, 1, H]` vectors
-(`facebook/bart-base`). Full Wikidata-dump rebuild: `cache_building/README.md`.
+Uses `facebook/bart-base`. We store a mean-pooled vector per text
+(`[n, 1, H]`), which is what the scorers use anyway. To rebuild entity KBs from
+a Wikidata dump, see `cache_building/README.md`.
 
-## 5. From-scratch: mGENRE
+---
 
-### Exact Table-2 numbers (dumps / raw beams)
+## mGENRE
 
-No GPU. Uses finalized dumps; optionally reconstructs Quotebank from raw beams:
+### Using the saved mGENRE scores (matches the paper)
+
+The original runs already saved candidate scores. Copy them into
+`artifacts/from_scratch/` (and optionally rebuild Quotebank scores from the
+raw beam file to check the conversion):
 
 ```bash
 pip install -r requirements-repro.txt
-# Optional for raw-beam check: place title map at
-#   models/mgenre/lang_title2wikidataID-normalized_with_redirect.pkl
 python3 scripts/convert_mgenre_raw.py
 ```
 
-Paper-best contexts: Quotebank **t=128** (P@1 0.963), AIDA **t=256** (P@1 0.682).
-Sources: `score_cache/raw/genre_context_scores_{qb,aida}.pkl` and optional
-`score_cache/raw/genre_context_scores_all.pkl`.
+Best context widths in the paper: Quotebank **128** tokens (P@1 0.963),
+AIDA **256** (P@1 0.682).  
+Files: `score_cache/raw/genre_context_scores_qb.pkl`,
+`genre_context_scores_aida.pkl`, and optionally `genre_context_scores_all.pkl`
+(raw beams).
 
-### Live GPU re-run
+### Running mGENRE again on a GPU
 
-**Protocol** (from `aa.ipynb` / Appendix B.3):
+This loads the public mGENRE checkpoint and scores every mention again. You need
+a GPU, a fairseq build with constrained decoding, and several large downloads.
 
-1. Mark mention with `[START]` / `[END]`; keep at most `t` mBART tokens on each side.
-2. Constrained beam search, **`beam=10`**, **no** `marginalize`.
-3. Map `title >> lang` → QID with `max(ids, key=lambda y: int(y[1:]))`.
-4. Score = `exp(log-likelihood)`; missing candidates → 0.
-5. Quotebank: sum per-offset scores with the notebook cell-10 `cache.add` quirk.
+How the paper scored mentions:
 
-**Install fairseq + GENRE** (prefix-constraint fork required):
+1. Wrap the mention in `[START]` / `[END]`, keep at most `t` mBART tokens on each side.
+2. Beam search with beam size 10. Do **not** turn on `marginalize`.
+3. Map each hypothesis `title >> lang` to a Wikidata id by taking the max QID
+   (`max(ids, key=lambda y: int(y[1:]))`).
+4. Score = `exp(log-likelihood)`; candidates the model never proposes get 0.
+5. On Quotebank, sum scores across mention offsets the same way as notebook
+   `aa.ipynb` (the `cache.add` quirk in cell 10).
+
+Install:
 
 ```bash
 git clone --branch fixing_prefix_allowed_tokens_fn https://github.com/nicola-decao/fairseq
 cd fairseq && pip install --editable ./ && cd ..
 git clone https://github.com/facebookresearch/GENRE.git
-# GENRE's `genre/` package must be importable (pip install -e GENRE or PYTHONPATH).
+# make the `genre` package importable, e.g. pip install -e GENRE
 pip install -r requirements-mgenre.txt
 ```
 
-Point `FAIRSEQ_ROOT` at the fairseq checkout if needed:
-
 ```bash
 export FAIRSEQ_ROOT=/path/to/fairseq
-source scripts/mgenre_env.sh   # optional; prepends FAIRSEQ_ROOT to PYTHONPATH
+source scripts/mgenre_env.sh   # puts fairseq on PYTHONPATH
 ```
 
-**Download assets** into `models/mgenre/`:
+Download into `models/mgenre/`:
 
 ```bash
 mkdir -p models/mgenre && cd models/mgenre
@@ -158,75 +176,84 @@ wget https://dl.fbaipublicfiles.com/GENRE/lang_title2wikidataID-normalized_with_
 cd ../..
 ```
 
-Loading the title→QID map needs tens of GB of RAM.
-
-**Run:**
+The title→QID map alone needs on the order of tens of GB of RAM.
 
 ```bash
 python scripts/run_mgenre.py --dataset quotebank --context 128 --device cuda:0
 python scripts/run_mgenre.py --dataset aida --context 256 --device cuda:0
-# or: bash scripts/run_mgenre_pipeline.sh
 python3 scripts/eval_from_scratch.py
 ```
 
-Live beams are not bit-identical to the 2022 stack (fairseq/CUDA), but argmax
-agreement is near-complete; prefer dumps / `convert_mgenre_raw.py` for exact
-paper cells.
+Expect predictions to agree with the saved scores on nearly all mentions, but not
+byte-for-byte log-likelihoods. For the numbers printed in the paper, use the
+saved score files above.
 
-## 6. From-scratch: Eigenthemes
+---
 
-Needs `workspace/eigenthemes/` (DeepWalk embeddings + candidate JSON inputs from
-the original research tree) and a working Eigenthemes Python env (numpy/scipy/
-sklearn; see that tree’s README).
+## Eigenthemes
+
+Put the original Eigenthemes tree at `workspace/eigenthemes/` (DeepWalk
+embeddings plus the candidate JSON lists). Then:
 
 ```bash
 python3 scripts/run_eigenthemes.py --dataset both --variant both --reuse-raw
 ```
 
-- **Eigen**: weigen, `meanCenter=False`, `numCands=20`, `ncomp=10`.  
-  Quotebank: NS-weighted JSON + `NS→LQID`. AIDA: degree JSON, raw argmax.
-- **Eigen (IScore)**: same weigen on shipped `*_iscore_*_test_complete.json`,
-  then NS fill for missing embeddings.
+- **Eigen** — weighted eigen (`weigen`), `meanCenter=False`, 20 candidates, 10 components.  
+  Quotebank uses NS weights and NS→LQID tie-break; AIDA uses degree weights and plain `argmax`.
+- **Eigen (IScore)** — same, but on the historical `*_iscore_*_test_complete.json`
+  lists, with NS filled in where DeepWalk has no vector.
 
-## 7. Protocol summary
+---
 
-**Quotebank** — popularity TB → LQID (`NP→LQID` for IScore; `PRWP→LQID` for
-EEIScore/UIScore; `NS→LQID` otherwise).  
-**UIScore** = IScore+NIScore+EEIScore `(1,1,1)`.  
-**UCSE** (0.882): CSE←½(x+1), NCSE←Laplacian, CSSVE←Laplacian, w=`(0.45,0.9,0.2)`.
+## Scoring rules (short)
 
-**AIDA** — raw scores, numpy `argmax`.  
-**UIScore** `(0.9,0,1)`. **UCSE** = ½(NCSE+1)+Laplacian(CSSVE), w=`(0,1,1)`.
+**Quotebank.** After the method score, break ties with a popularity feature, then
+LQID. IScore uses NP→LQID; EEIScore and UIScore use PRWP→LQID; most others use
+NS→LQID.  
+UIScore = IScore + NIScore + EEIScore with weights (1, 1, 1).  
+UCSE (paper 0.882) = transformed CSE / NCSE / CSSVE with weights (0.45, 0.9, 0.2)
+— CSE gets ½(x+1), NCSE and CSSVE get a Laplacian `(x+1)/sum(x+1)`.
 
-## 8. Known paper errors
+**AIDA.** No popularity tie-break.  
+UIScore weights (0.9, 0, 1).  
+UCSE = ½(NCSE+1) + Laplacian(CSSVE) with weights (0, 1, 1).
 
-Print/dump mismatches (not method bugs). Scripts target the **Reproduced** column.
+---
+
+## Mistakes in the paper PDF
+
+These are typos or scrambled cells, not bugs in the methods. Our scripts aim for
+the “Reproduced” column.
 
 | Issue | Printed | Reproduced | Notes |
 |---|---|---|---|
-| Quotebank NIScore overall (Table 2) | 0.851 | **0.898** | Impossible given easy/hard 0.966/0.571 on 203+42 |
-| AIDA NIScore overall (Table 2) | 0.562 | **0.589** | Easy/hard match; overall likely copied from EEIScore |
-| AIDA Eigen easy (Table 2) | 0.859 | **0.858** | Overall **0.617** exact |
-| Table 11 AIDA MRR (CSE, EEIScore, CSSVE, UCSE, NIScore) | see PDF | dump-derived | Same dumps match Table 2 P@1 |
-| Table 8 / 11 AIDA mGENRE MRR | 0.720 / 0.730 | **0.743 / 0.736** | P@1 matches; printed MRR undercounts |
-| Table 9 UIScore+PRWP | 0.942 | **0.943** | Same as Table 2 UIScore overall |
+| Quotebank NIScore overall (Table 2) | 0.851 | **0.898** | Impossible given easy/hard 0.966 / 0.571 on a 203+42 split |
+| AIDA NIScore overall (Table 2) | 0.562 | **0.589** | Easy/hard match the paper; overall looks copied from EEIScore |
+| AIDA Eigen easy (Table 2) | 0.859 | **0.858** | Overall 0.617 matches |
+| Table 11 AIDA MRR for CSE / EEIScore / CSSVE / UCSE / NIScore | see PDF | from the same score files as Table 2 | Printed MRR rows look swapped |
+| Table 8 / 11 AIDA mGENRE MRR | 0.720 / 0.730 | **0.743 / 0.736** | P@1 matches; printed MRR is too low |
+| Table 9 UIScore + PRWP | 0.942 | **0.943** | Same run as Table 2 UIScore |
 
-Also: Table 4 categories are qualitative (error **count** 14 matches); Table 5
-is paper annotation arithmetic; Table 10 is paper hardware (reported as-is).
-Table 3 matches P@1 point estimates (not bootstrap CI half-widths).
+Table 4’s error *categories* are hand labels (we only check that there are 14
+UIScore mistakes). Table 5’s counts are taken from the paper and checked for
+internal consistency. Table 10 is whatever machine they timed on. Table 3
+compares P@1 only, not the bootstrap intervals.
 
-## 9. Layout
+---
+
+## Repo layout
 
 ```
-data/                 Quotebank + AIDA evaluation JSON (+ entity_types.json)
-scores/               popularity + IScore ablation pickles
-score_cache/raw/      frozen method score dumps (incl. mGENRE)
-caches/               entity KB, unambiguous mentions, BART embeddings (Git LFS)
-scripts/              table reproduction + from-scratch runners
-runlib/               importable scorers + cache path resolution
-cache_building/       rebuild caches from a Wikidata dump
-models/mgenre/        mGENRE checkpoint + trie + title map (download; gitignored)
-workspace/eigenthemes/ DeepWalk + Eigen JSON inputs (optional; gitignored)
-paper/                PDFs + parsed tables
-artifacts/            script outputs
+data/                  evaluation JSON (Quotebank, AIDA, entity types)
+scores/                popularity scores + IScore ablation
+score_cache/raw/       saved method scores from the original runs
+caches/                entity KB, unambiguous mentions, BART embeddings (Git LFS)
+scripts/               table builders and re-runners
+runlib/                scorers used by the heuristics
+cache_building/        rebuild caches from a Wikidata dump
+models/mgenre/         mGENRE weights (you download these; not in git)
+workspace/eigenthemes/ DeepWalk + Eigen inputs (optional; not in git)
+paper/                 PDFs + parsed table JSON
+artifacts/             script output
 ```
