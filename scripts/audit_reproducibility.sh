@@ -51,8 +51,8 @@ PY
 echo "=== E. Optional tools fail clearly without their downloads ==="
 uv run --frozen python scripts/run_eigenthemes.py --dataset quotebank >/tmp/eigen_msg.txt 2>&1 || true
 grep -q "Eigenthemes tree not found" /tmp/eigen_msg.txt
-# mGENRE without setup: missing model path
+# mGENRE without setup: missing model path (or genre package if models exist but env was not set up)
 uv run --frozen python scripts/run_mgenre.py --dataset quotebank >/tmp/mgenre_msg.txt 2>&1 || true
-grep -q "Missing" /tmp/mgenre_msg.txt
+grep -Eq "Missing|No module named 'genre'|No module named \"genre\"" /tmp/mgenre_msg.txt
 
 echo "=== AUDIT PASS ==="
