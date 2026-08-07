@@ -1,0 +1,33 @@
+Feature: D            Normalization: No normalization     P@1: 0.869 MRR: 0.921
+Feature: D            Normalization: Lemmatization        P@1: 0.890 MRR: 0.930
+Feature: D            Normalization: Stemming             P@1: 0.894 MRR: 0.934
+Feature: P            Normalization: No normalization     P@1: 0.833 MRR: 0.903
+Feature: P            Normalization: Lemmatization        P@1: 0.816 MRR: 0.895
+Feature: P            Normalization: Stemming             P@1: 0.833 MRR: 0.902
+Feature: S            Normalization: No normalization     P@1: 0.894 MRR: 0.936
+Feature: S            Normalization: Lemmatization        P@1: 0.898 MRR: 0.940
+Feature: S            Normalization: Stemming             P@1: 0.906 MRR: 0.944
+Feature: S_A          Normalization: No normalization     P@1: 0.886 MRR: 0.932
+Feature: S_A          Normalization: Lemmatization        P@1: 0.890 MRR: 0.935
+Feature: S_A          Normalization: Stemming             P@1: 0.898 MRR: 0.939
+Feature: D + P        Normalization: No normalization     P@1: 0.841 MRR: 0.907
+Feature: D + P        Normalization: Lemmatization        P@1: 0.820 MRR: 0.898
+Feature: D + P        Normalization: Stemming             P@1: 0.841 MRR: 0.906
+Feature: D + S        Normalization: No normalization     P@1: 0.902 MRR: 0.943
+Feature: D + S        Normalization: Lemmatization        P@1: 0.906 MRR: 0.945
+Feature: D + S        Normalization: Stemming             P@1: 0.918 MRR: 0.952
+Feature: D + S_A      Normalization: No normalization     P@1: 0.890 MRR: 0.937
+Feature: D + S_A      Normalization: Lemmatization        P@1: 0.906 MRR: 0.947
+Feature: D + S_A      Normalization: Stemming             P@1: 0.914 MRR: 0.950
+Feature: P + S        Normalization: No normalization     P@1: 0.861 MRR: 0.919
+Feature: P + S        Normalization: Lemmatization        P@1: 0.861 MRR: 0.920
+Feature: P + S        Normalization: Stemming             P@1: 0.873 MRR: 0.925
+Feature: P + S_A      Normalization: No normalization     P@1: 0.878 MRR: 0.928
+Feature: P + S_A      Normalization: Lemmatization        P@1: 0.882 MRR: 0.931
+Feature: P + S_A      Normalization: Stemming             P@1: 0.882 MRR: 0.930
+Feature: D + P + S    Normalization: No normalization     P@1: 0.861 MRR: 0.921
+Feature: D + P + S    Normalization: Lemmatization        P@1: 0.861 MRR: 0.920
+Feature: D + P + S    Normalization: Stemming             P@1: 0.873 MRR: 0.926
+Feature: D + P + S_A  Normalization: No normalization     P@1: 0.886 MRR: 0.934
+Feature: D + P + S_A  Normalization: Lemmatization        P@1: 0.886 MRR: 0.934
+Feature: D + P + S_A  Normalization: Stemming             P@1: 0.882 MRR: 0.930
