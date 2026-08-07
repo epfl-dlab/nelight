@@ -41,7 +41,7 @@ Details, known PDF typos, and the few items that cannot be rebuilt:
 ]
 ```
 
-`offsets` are word spans (`content.split()`).
+`offsets` should be word spans. The scripts assume that document content consists of whitespace-joined tokens. This is an artifact of ensuring compatibility with Quotebank's article metadata format.  
 
 **2. Build an entity KB** from a
 [Wikidata dump](https://dumps.wikimedia.org/wikidatawiki/entities/) — see
