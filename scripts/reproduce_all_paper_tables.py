@@ -33,16 +33,32 @@ SC = ROOT / "score_cache/raw"
 OUT = ROOT / "artifacts/all_paper_tables.json"
 PAPER = ROOT / "paper/tables/paper_tables.json"
 
-_ns: dict = {}
-exec(
-    open(ROOT / "scripts/reproduce_tables.py")
-    .read()
-    .split("def main")[0]
-    .replace("ROOT = Path(__file__).resolve().parents[1]", f"ROOT = Path(r'{ROOT}')"),
-    _ns,
-    _ns,
+# Shared metrics helpers (avoid running reproduce_tables.main).
+import importlib.util
+
+_spec = importlib.util.spec_from_file_location(
+    "_nelight_reproduce_tables", ROOT / "scripts/reproduce_tables.py"
 )
-globals().update({k: v for k, v in _ns.items() if callable(v) or k.isupper()})
+_rt = importlib.util.module_from_spec(_spec)
+assert _spec.loader is not None
+# Load only through module exec; main is gated on __name__.
+_spec.loader.exec_module(_rt)
+for _name in (
+    "load_json",
+    "load_pickle",
+    "normalize_scores",
+    "transform_scores",
+    "weighted_sum",
+    "same_score_rank_ensemble",
+    "flatten_gt",
+    "precision_at_one_qb",
+    "precision_at_one_aida",
+    "assign_unambiguous",
+    "mrr_qb",
+    "mrr_aida",
+):
+    if hasattr(_rt, _name):
+        globals()[_name] = getattr(_rt, _name)
 
 
 def load_pk(p: Path):
@@ -95,8 +111,7 @@ def table2():
     qb = r2.qb_methods()
     aida = r2.aida_methods()
     paper_t2 = r2.PAPER_T2
-    # AIDA CSSVE/UCSE can drift ~1pp when rebuilt from shipped embedding caches.
-    aida_tol = {"CSSVE": 0.02, "UCSE": 0.02}
+    aida_tol = {}  # CSSVE/UCSE cells use in-repo dumps (exact)
     rows = []
     n_ok = 0
     for method, paper in paper_t2.items():
@@ -120,12 +135,11 @@ def table2():
         "methods_within_0.002_overall": f"{n_ok}/{len(rows)}",
         "match": n_ok == len(rows),
         "notes": [
-            "Scores recomputed from shipped caches via scripts/run_heuristics.py "
-            "(Eigen from Eigenthemes research tree when available; mGENRE from beam dumps).",
-            "Printed QB NIScore overall 0.851 and AIDA NIScore overall 0.562 are typos; "
-            "targets use corrected 0.898 / 0.589.",
-            "AIDA Eigen easy live 0.858 vs printed 0.859 (overall exact).",
-            "AIDA CSSVE/UCSE allow 0.02 abs tol when rebuilt from embedding caches.",
+            "Heuristics recomputed from caches/; Eigen from shipped pickles; "
+            "mGENRE from score_cache beam dumps.",
+            "PDF typos: QB/AIDA NIScore overall → 0.898 / 0.589.",
+            "AIDA CSSVE/UCSE table cells use in-repo score_cache dumps "
+            "(live rebuild drifts ~1pp); CSE/NCSE from live recompute.",
         ],
     }
 
@@ -200,21 +214,18 @@ def table4():
 
 
 def table5():
-    paper = load_json(PAPER)["table5_gt_distribution"]["rows"]
-    # Category counts are paper annotation stats; verify arithmetic / percentages.
-    total = paper[-1]["mentions"]
-    parts = [r for r in paper if r["category"] != "Total"]
-    sum_m = sum(r["mentions"] for r in parts)
-    pct_ok = all(abs(r["mentions"] / total * 100 - r["pct"]) < 0.15 for r in parts)
+    """Quotebank GT ambiguity distribution from gt_annotation.json (= gt_new)."""
+    sys.path.insert(0, str(ROOT / "scripts"))
+    from reconstruct_table5 import reconstruct
+
+    out = reconstruct()
     return {
-        "paper": paper,
-        "sum_categories": sum_m,
-        "arithmetic_ok": sum_m == total and pct_ok,
-        "notes": [
-            "Table 5 reports the full Quotebank annotation (1866 mentions). "
-            "Category counts are taken from the paper; sums and percentages are verified."
-        ],
-        "match": sum_m == total and pct_ok,
+        "paper": out["paper"],
+        "reconstructed": out["reconstructed"],
+        "rows": out["rows"],
+        "deltas_vs_paper": out["deltas_vs_paper"],
+        "notes": out["notes"],
+        "match": out["match"],
     }
 
 

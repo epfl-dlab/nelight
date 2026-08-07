@@ -1,70 +1,34 @@
 #!/usr/bin/env bash
-# Recompute heuristics from shipped caches, then rebuild Tables 1–11.
+# Recompute paper tables from in-repo caches (no GPU, no Drive trees).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
 if ! command -v uv >/dev/null 2>&1; then
-  echo "uv is required (https://docs.astral.sh/uv/getting-started/installation/)" >&2
+  echo "uv is required (https://docs.astral.sh/uv/)" >&2
   exit 1
 fi
 
-echo "=== 0. Environment (includes NLTK / torch for from-scratch scorers) ==="
+echo "=== 0. Env ==="
 uv sync --frozen --extra from-scratch
 run() { uv run --frozen --extra from-scratch "$@"; }
-
 run python -c \
   "import nltk; [nltk.download(p, quiet=True) for p in
    ('punkt','punkt_tab','wordnet','omw-1.4','stopwords')]"
 
-echo "=== 1. Faithfulness / cache wiring audit ==="
+echo "=== 1. Cache wiring ==="
 run python scripts/audit_faithfulness.py
 
-echo "=== 2. Recompute heuristics from caches (both datasets + embeddings) ==="
+echo "=== 2. Heuristics + embeddings → artifacts/from_scratch ==="
 run python scripts/run_heuristics.py --dataset both --with-embeddings
 
-echo "=== 3. Recompute IScore ablation (Table 6) ==="
+echo "=== 3. IScore ablation (Table 6) ==="
 run python scripts/run_iscore_ablation.py
 
-echo "=== 4. Recompute Eigenthemes (if research tree is available) ==="
-if uv sync --frozen --extra from-scratch --extra eigenthemes >/tmp/nelight_eigen_sync.txt 2>&1 \
-   && uv run --frozen --extra from-scratch --extra eigenthemes \
-        python scripts/run_eigenthemes.py --dataset both --variant both; then
-  echo "Eigenthemes recomputed and merged into ranked_scores.pkl"
-else
-  echo "Eigenthemes skipped (tree/deps missing); using shipped Eigen scores."
-  echo "See REPRODUCIBILITY.md § Eigenthemes."
-fi
-
-echo "=== 5. Materialize mGENRE score dicts from original beam dumps ==="
+echo "=== 4. mGENRE dumps + Eigen pickles → ranked_scores ==="
 run python scripts/convert_mgenre_raw.py
-# Ensure mGENRE lands in ranked_scores after convert
-run python - <<'PY'
-import pickle
-from pathlib import Path
-FS = Path("artifacts/from_scratch")
-for ds, pref in [("quotebank", "mGENRE_t128.pkl"), ("aida", "mGENRE_t256.pkl")]:
-    ranked_p = FS / ds / "ranked_scores.pkl"
-    best_p = FS / ds / "mGENRE_best.pkl"
-    pref_p = FS / ds / pref
-    src = best_p if best_p.exists() else pref_p
-    if not ranked_p.exists() or not src.exists():
-        continue
-    ranked = pickle.load(open(ranked_p, "rb"))
-    ranked["mGENRE"] = pickle.load(open(src, "rb"))
-    pickle.dump(ranked, open(ranked_p, "wb"))
-    print(f"merged mGENRE into {ranked_p}")
-PY
+run python scripts/merge_paper_scores.py
 
-echo "=== 6. Table 2 / 3 / 11 from recomputed scores ==="
-run python scripts/reproduce_tables.py
-
-echo "=== 7. Table 2 cross-check (from_scratch artifacts) ==="
-run python scripts/reproduce_paper_from_scratch.py
-
-echo "=== 8. All paper tables 1–11 ==="
+echo "=== 5. Tables 1–11 ==="
 run python scripts/reproduce_all_paper_tables.py
 
-echo "=== Done ==="
-echo "See artifacts/all_paper_tables.json (Tables 1–11),"
-echo "    artifacts/reproduced_tables.json, artifacts/from_scratch/table2_from_scratch.json"
-echo "mGENRE on GPU (optional): bash scripts/setup_mgenre.sh && source scripts/mgenre_env.sh && python scripts/run_mgenre.py --dataset quotebank --context 128"
+echo "=== Done → artifacts/all_paper_tables.json ==="

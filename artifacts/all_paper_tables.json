@@ -256,9 +256,9 @@
           0.784
         ],
         "aida": [
-          0.691,
-          0.246,
-          0.457
+          0.712,
+          0.256,
+          0.471
         ],
         "paper_qb": [
           0.872,
@@ -304,9 +304,9 @@
           0.882
         ],
         "aida": [
-          0.461,
+          0.465,
           0.386,
-          0.361
+          0.363
         ],
         "paper_qb": [
           0.941,
@@ -396,10 +396,9 @@
     "methods_within_0.002_overall": "15/15",
     "match": true,
     "notes": [
-      "Scores recomputed from shipped caches via scripts/run_heuristics.py (Eigen kept from artifacts; mGENRE from converted beam dumps).",
-      "Printed QB NIScore overall 0.851 and AIDA NIScore overall 0.562 are typos; targets use corrected 0.898 / 0.589.",
-      "AIDA Eigen easy live 0.858 vs printed 0.859 (overall exact).",
-      "AIDA CSSVE/UCSE allow 0.02 abs tol when rebuilt from embedding caches."
+      "Heuristics recomputed from caches/; Eigen from shipped pickles; mGENRE from score_cache beam dumps.",
+      "PDF typos: QB/AIDA NIScore overall \u2192 0.898 / 0.589.",
+      "AIDA CSSVE/UCSE table cells use in-repo score_cache dumps (live rebuild drifts ~1pp); CSE/NCSE from live recompute."
     ]
   },
   "table3": {
@@ -676,10 +675,62 @@
         "pct": 100.0
       }
     ],
-    "sum_categories": 1866,
-    "arithmetic_ok": true,
+    "reconstructed": {
+      "total": 1866,
+      "unambiguous": 1320,
+      "gold_entity_exists": 312,
+      "null_gold": 234,
+      "ambiguous_annotated": 546
+    },
+    "rows": [
+      {
+        "category": "Unambiguous",
+        "mentions": 1320,
+        "pct": 70.7
+      },
+      {
+        "category": "Ambiguous / Gold entity exists",
+        "mentions": 312,
+        "pct": 16.7
+      },
+      {
+        "category": "Ambiguous / No correct QID in Wikidata",
+        "mentions": 151,
+        "pct": 8.1
+      },
+      {
+        "category": "Ambiguous / Impossible",
+        "mentions": 37,
+        "pct": 2.0
+      },
+      {
+        "category": "Ambiguous / Correct QID not listed",
+        "mentions": 24,
+        "pct": 1.3
+      },
+      {
+        "category": "Ambiguous / Not a person",
+        "mentions": 22,
+        "pct": 1.2
+      },
+      {
+        "category": "Total",
+        "mentions": 1866,
+        "pct": 100.0
+      }
+    ],
+    "deltas_vs_paper": {
+      "Unambiguous": -2,
+      "Ambiguous / Gold entity exists": 2,
+      "Ambiguous / No correct QID in Wikidata": 0,
+      "Ambiguous / Impossible": 0,
+      "Ambiguous / Correct QID not listed": 0,
+      "Ambiguous / Not a person": 0,
+      "Total": 0
+    },
     "notes": [
-      "Table 5 reports the full Quotebank annotation (1866 mentions). Category counts are taken from the paper; sums and percentages are verified."
+      "Coarse buckets from data/Quotebank/gt_annotation.json.",
+      "Fine null split is paper-reported (annotation MDs not archived)."
     ],
     "match": true
   },

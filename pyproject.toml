@@ -19,7 +19,7 @@ from-scratch = [
     "nltk>=3.6",
     "pywsd>=1.2",
 ]
-# Live Eigenthemes (DeepWalk + PCA) from the research tree.
+# Optional live Eigenthemes re-run (needs external DeepWalk tree; see REPRODUCIBILITY.md).
 eigenthemes = [
     "gensim>=4.0",
     "scikit-learn>=1.0",

@@ -44,23 +44,6 @@ def save_pickle(obj, path: Path):
         pickle.dump(obj, f)
 
 
-def _to_torch(obj):
-    """Coerce embedding caches to torch tensors (caches may store numpy)."""
-    import torch
-
-    if isinstance(obj, torch.Tensor):
-        return obj
-    if isinstance(obj, np.ndarray):
-        return torch.from_numpy(np.asarray(obj))
-    if isinstance(obj, dict):
-        return {k: _to_torch(v) for k, v in obj.items()}
-    if isinstance(obj, list):
-        return [_to_torch(v) for v in obj]
-    if isinstance(obj, tuple):
-        return tuple(_to_torch(v) for v in obj)
-    return obj
-
-
 def lowercase_keys(scores: dict) -> dict:
     return {
         aid: {n.lower(): np.asarray(v, dtype=np.float64) for n, v in ns.items()}
@@ -236,10 +219,10 @@ def run_dataset(
         wiki_cache = load_pickle(resolve_cache("quotebank", "entity_kb"))
         protocol = "qb"
         if with_embeddings:
-            print(f"[{dataset}] loading embedding caches (torch-coerced)...", flush=True)
-            emb_cache = _to_torch(load_pickle(resolve_cache("quotebank", "entity_embeddings")))
-            content_emb = _to_torch(load_pickle(resolve_cache("quotebank", "document_embeddings")))
-            sent_emb = _to_torch(load_pickle(resolve_cache("quotebank", "mention_embeddings")))
+            print(f"[{dataset}] loading embedding caches...", flush=True)
+            emb_cache = load_pickle(resolve_cache("quotebank", "entity_embeddings"))
+            content_emb = load_pickle(resolve_cache("quotebank", "document_embeddings"))
+            sent_emb = load_pickle(resolve_cache("quotebank", "mention_embeddings"))
     else:
         data = load_json(ROOT / "data/AIDA/data.json")
         easy = load_json(ROOT / "data/AIDA/easy.json")
@@ -248,16 +231,16 @@ def run_dataset(
         wiki_cache = load_pickle(resolve_cache("aida", "entity_kb"))
         protocol = "aida"
         if with_embeddings:
-            print(f"[{dataset}] loading embedding caches (torch-coerced)...", flush=True)
+            print(f"[{dataset}] loading embedding caches...", flush=True)
             ep = resolve_cache("aida", "entity_embeddings", required=False)
             dp = resolve_cache("aida", "document_embeddings", required=False)
             mp = resolve_cache("aida", "mention_embeddings", required=False)
             if ep:
-                emb_cache = _to_torch(load_pickle(ep))
+                emb_cache = load_pickle(ep)
             if dp:
-                content_emb = _to_torch(load_pickle(dp))
+                content_emb = load_pickle(dp)
             if mp:
-                sent_emb = _to_torch(load_pickle(mp))
+                sent_emb = load_pickle(mp)
             if emb_cache is None:
                 print(
                     f"[{dataset}] AIDA embedding caches not available; skipping CSE family",
@@ -447,20 +430,14 @@ def run_dataset(
         print(f"\n=== {dataset}: wrote scores (no gold splits; skipped P@1) ===")
         print("Methods:", ", ".join(m for m in methods if m in ranked))
 
-    # Keep Eigen / mGENRE from a previous ranked bundle or dedicated pickles.
-    # Those methods are not recomputed by this script (Eigenthemes tree / GPU).
+    # Eigen / mGENRE are merged later by scripts/merge_paper_scores.py
+    # (shipped pickles + score_cache). Preserve any already present.
     prev_path = ds_out / "ranked_scores.pkl"
     if prev_path.exists():
         prev = load_pickle(prev_path)
         for key in ("Eigen", "Eigen (IScore)", "Eigen_IScore", "mGENRE"):
             if key in prev and key not in ranked:
                 ranked[key] = prev[key]
-    if "mGENRE" not in ranked:
-        for name in ("mGENRE_best.pkl", "mGENRE_t128.pkl", "mGENRE_t256.pkl"):
-            cand = ds_out / name
-            if cand.exists():
-                ranked["mGENRE"] = load_pickle(cand)
-                break
     if "Eigen (IScore)" not in ranked and "Eigen_IScore" in ranked:
         ranked["Eigen (IScore)"] = ranked["Eigen_IScore"]
 

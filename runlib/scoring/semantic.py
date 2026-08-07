@@ -1,17 +1,13 @@
-import pickle
 import re
 
 import numpy as np
-import importlib
-import pywsd.utils
-import torch
-import torch.nn.functional as F
 
 from pywsd.utils import lemmatize_sentence
 from nltk import WordNetLemmatizer, PorterStemmer, TreebankWordTokenizer
 from nltk.tokenize.treebank import TreebankWordDetokenizer
 from nltk.corpus import stopwords
 from runlib.scoring import Scorer
+from runlib.scoring._emb import cosine, mean_vec, stack_mean
 from runlib.utils.processing import *
 
 class KnowledgeGraphSemanticScorer(Scorer):
@@ -137,11 +133,11 @@ class EntityContentSimilarityScorer(KnowledgeGraphSemanticScorer):
     def _paragraph_content_single(self, qid, article_id):
         if qid not in self.embedding_cache or 'first_paragraph' not in self.embedding_cache[qid]:
             return 0
-        first_paragraph_embedding = self.embedding_cache[qid]['first_paragraph'].mean(axis=1)
-        content_embedding = self.content_embeddings[article_id].mean(axis=1)
-
-        return \
-            F.cosine_similarity(first_paragraph_embedding, content_embedding, dim=1, eps=1e-8).detach().cpu().numpy()[0]
+        first_paragraph_embedding = mean_vec(
+            self.embedding_cache[qid]['first_paragraph'], axis=1
+        )
+        content_embedding = mean_vec(self.content_embeddings[article_id], axis=1)
+        return cosine(first_paragraph_embedding, content_embedding)
 
     def paragraph_content_embeddings(self, name, article):
         article_id = article['articleID']
@@ -151,10 +147,13 @@ class EntityContentSimilarityScorer(KnowledgeGraphSemanticScorer):
         if qid not in self.embedding_cache or 'first_paragraph' not in self.embedding_cache[qid]:
             return -1
 
-        first_paragraph_embedding = self.embedding_cache[qid]['first_paragraph'].mean(axis=1)
-        content_embedding = self.sentence_embeddings[article_id][name].mean(axis=1)
-        return \
-            F.cosine_similarity(first_paragraph_embedding, content_embedding, dim=1, eps=1e-8).detach().cpu().numpy()[0]
+        first_paragraph_embedding = mean_vec(
+            self.embedding_cache[qid]['first_paragraph'], axis=1
+        )
+        content_embedding = mean_vec(
+            self.sentence_embeddings[article_id][name], axis=1
+        )
+        return cosine(first_paragraph_embedding, content_embedding)
 
     def paragraph_content_narrow(self, name, article):
         article_id = article['articleID']
@@ -166,11 +165,10 @@ class EntityContentSimilarityScorer(KnowledgeGraphSemanticScorer):
             return -1
         if 'first_paragraph' not in self.embedding_cache[qid]:
             try:
-                emb = torch.cat([emb.mean(axis=1) for prop, emb in self.embedding_cache[qid].items()]).mean(axis=0)
-                content_embedding = self.content_embeddings[article_id].mean(axis=1)
-                return F.cosine_similarity(emb, content_embedding, dim=1, eps=1e-8).detach().cpu().numpy()[0]
-            except NotImplementedError:
-                print(self.embedding_cache[qid])
+                emb = stack_mean(self.embedding_cache[qid].values())
+                content_embedding = mean_vec(self.content_embeddings[article_id], axis=1)
+                return cosine(emb, content_embedding)
+            except (NotImplementedError, ValueError, TypeError):
                 return -1
         else:
             return self._paragraph_content_single(qid, article_id)
@@ -184,9 +182,11 @@ class EntityContentSimilarityScorer(KnowledgeGraphSemanticScorer):
         if qid not in self.embedding_cache or len(self.embedding_cache[qid]) == 0:
             return -1
         if 'first_paragraph' not in self.embedding_cache[qid]:
-            emb = torch.cat([emb.mean(axis=1) for prop, emb in self.embedding_cache[qid].items()]).mean(axis=0)
-            content_embedding = torch.tensor(self.sentence_embeddings[article_id][name].mean(axis=1))
-            return F.cosine_similarity(emb, content_embedding, dim=1, eps=1e-8).detach().cpu().numpy()[0]
+            emb = stack_mean(self.embedding_cache[qid].values())
+            content_embedding = mean_vec(
+                self.sentence_embeddings[article_id][name], axis=1
+            )
+            return cosine(emb, content_embedding)
         else:
             return self._paragraph_content_narrow_single(qid, name, article_id)
 
@@ -281,10 +281,10 @@ class EntityEntitySimilarityScorer(KnowledgeGraphSemanticScorer):
                 entity_embeddings = entity_dict[prop]
                 prop_scores = []
                 for embedding in embeddings:
-                    embedding = embedding.mean(dim=0)
+                    embedding = mean_vec(embedding, axis=0)
                     for entity_embedding in entity_embeddings:
-                        entity_embedding = entity_embedding.mean(dim=0)
-                        prop_scores.append(F.cosine_similarity(embedding, entity_embedding, dim=0).item())
+                        entity_embedding = mean_vec(entity_embedding, axis=0)
+                        prop_scores.append(cosine(embedding, entity_embedding))
                 score += sum(prop_scores)
         return score
 

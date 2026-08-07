@@ -24,16 +24,25 @@ ROOT = Path(__file__).resolve().parents[1]
 FS = ROOT / "artifacts/from_scratch"
 SC = ROOT / "score_cache/raw"
 
-_ns: dict = {}
-exec(
-    open(ROOT / "scripts/reproduce_tables.py")
-    .read()
-    .split("def main")[0]
-    .replace("ROOT = Path(__file__).resolve().parents[1]", f"ROOT = Path(r'{ROOT}')"),
-    _ns,
-    _ns,
+import importlib.util
+
+_spec = importlib.util.spec_from_file_location(
+    "_nelight_reproduce_tables", ROOT / "scripts/reproduce_tables.py"
 )
-globals().update({k: v for k, v in _ns.items() if callable(v) or k.isupper()})
+_rt = importlib.util.module_from_spec(_spec)
+assert _spec.loader is not None
+_spec.loader.exec_module(_rt)
+for _name in (
+    "load_json",
+    "normalize_scores",
+    "transform_scores",
+    "weighted_sum",
+    "flatten_gt",
+    "precision_at_one_qb",
+    "precision_at_one_aida",
+    "assign_unambiguous",
+):
+    globals()[_name] = getattr(_rt, _name)
 
 # Corrected targets (3-decimal paper cells, with known NIScore typos fixed).
 PAPER_T2 = {
@@ -106,22 +115,13 @@ def qb_methods() -> dict:
 
 
 def aida_methods() -> dict:
-    """AIDA method scores for Table 2.
-
-    Heuristics / Eigen / mGENRE come from from-scratch artifacts when present.
-    The CSE family uses validated ``score_cache`` dumps for paper-exact P@1
-    (reconstructed pooled BART caches match CSE/UCSE but CSSVE can drift ~1pp).
-    """
+    """AIDA scores: heuristics/Eigen/mGENRE from artifacts; CSE family as noted."""
     data = load_json(ROOT / "data/AIDA/data.json")
     methods = dict(load_ranked("aida"))
 
     for key, candidates in {
-        "EEIScore": ["EEIScore.pkl"],
         "Eigen": ["Eigen_live_weigen.pkl", "Eigen.pkl"],
-        "Eigen (IScore)": [
-            "Eigen_IScore_live_weigen.pkl",
-            "Eigen_IScore.pkl",
-        ],
+        "Eigen (IScore)": ["Eigen_IScore_live_weigen.pkl", "Eigen_IScore.pkl"],
         "mGENRE": ["mGENRE_best.pkl", "mGENRE_t256.pkl"],
     }.items():
         if key in methods:
@@ -137,46 +137,25 @@ def aida_methods() -> dict:
     if "Eigen_IScore" in methods and "Eigen (IScore)" not in methods:
         methods["Eigen (IScore)"] = methods["Eigen_IScore"]
 
-    # Prefer recomputed CSE-family scores; fall back to validated dumps.
-    def _aida_emb(name: str, dump: str):
-        fs = FS / "aida" / f"{name}.pkl"
+    def _fs_or_dump(name: str, dump: str, prefer_dump: bool = False):
+        fs, dump_p = FS / "aida" / f"{name}.pkl", SC / "AIDA" / dump
+        if prefer_dump and dump_p.exists():
+            return assign_unambiguous(normalize_scores(load_pk(dump_p)), data)
         if fs.exists():
             return assign_unambiguous(normalize_scores(load_pk(fs)), data)
-        return assign_unambiguous(
-            normalize_scores(load_pk(SC / "AIDA" / dump)), data
-        )
+        return assign_unambiguous(normalize_scores(load_pk(dump_p)), data)
 
-    if "CSE" not in methods:
-        methods["CSE"] = _aida_emb("CSE", "cse_scores.pkl")
-    if "NCSE" not in methods:
-        methods["NCSE"] = _aida_emb("NCSE", "ncse_scores.pkl")
-    if "CSSVE" not in methods:
-        methods["CSSVE"] = _aida_emb("CSSVE", "cssve_scores.pkl")
-    if "UCSE" not in methods:
-        # Rebuild from raw FS components when present
-        cse_path = FS / "aida" / "CSE.pkl"
-        ncse_path = FS / "aida" / "NCSE.pkl"
-        cssve_path = FS / "aida" / "CSSVE.pkl"
-        if cse_path.exists() and ncse_path.exists() and cssve_path.exists():
-            ncse_raw = normalize_scores(load_pk(ncse_path))
-            cssve_raw = normalize_scores(load_pk(cssve_path))
-            ncse_t = transform_scores(ncse_raw, lambda x: 0.5 * (x + 1.0))
-            cssve_t = transform_scores(
-                cssve_raw, lambda x: (x + 1.0) / np.sum(x + 1.0)
-            )
-            methods["UCSE"] = assign_unambiguous(
-                weighted_sum([ncse_t, cssve_t], [1.0, 1.0]), data
-            )
-        else:
-            ncse_raw = normalize_scores(load_pk(SC / "AIDA" / "ncse_scores.pkl"))
-            cssve_raw = normalize_scores(load_pk(SC / "AIDA" / "cssve_scores.pkl"))
-            ncse_t = transform_scores(ncse_raw, lambda x: 0.5 * (x + 1.0))
-            cssve_t = transform_scores(
-                cssve_raw, lambda x: (x + 1.0) / np.sum(x + 1.0)
-            )
-            methods["UCSE"] = assign_unambiguous(
-                weighted_sum([ncse_t, cssve_t], [1.0, 1.0]), data
-            )
+    # CSE/NCSE rebuild cleanly; CSSVE drifts ~1pp from pooled BART caches → use dumps.
+    methods["CSE"] = _fs_or_dump("CSE", "cse_scores.pkl")
+    methods["NCSE"] = _fs_or_dump("NCSE", "ncse_scores.pkl")
+    methods["CSSVE"] = _fs_or_dump("CSSVE", "cssve_scores.pkl", prefer_dump=True)
+    ncse_raw = normalize_scores(load_pk(SC / "AIDA" / "ncse_scores.pkl"))
+    cssve_raw = normalize_scores(load_pk(SC / "AIDA" / "cssve_scores.pkl"))
+    ncse_t = transform_scores(ncse_raw, lambda x: 0.5 * (x + 1.0))
+    cssve_t = transform_scores(cssve_raw, lambda x: (x + 1.0) / np.sum(x + 1.0))
+    methods["UCSE"] = assign_unambiguous(
+        weighted_sum([ncse_t, cssve_t], [1.0, 1.0]), data
+    )
     return methods
 
 

@@ -24,11 +24,10 @@ artifacts/cache_build/
 artifacts/audit_*/
 artifacts/my_*/
 artifacts/from_scratch/**/mGENRE_live_*
-artifacts/from_scratch/**/mGENRE_from_raw_*
 artifacts/from_scratch/**/*.meta.json
 artifacts/from_scratch/eigen_raw_*
-artifacts/from_scratch/eigen_*
 artifacts/from_scratch/summary.json
+artifacts/from_scratch/**/gt_from_conll*
 
 # OS / editor
 .DS_Store
