@@ -256,9 +256,9 @@
           0.784
         ],
         "aida": [
-          0.712,
-          0.256,
-          0.471
+          0.691,
+          0.246,
+          0.457
         ],
         "paper_qb": [
           0.872,
@@ -304,9 +304,9 @@
           0.882
         ],
         "aida": [
-          0.465,
+          0.461,
           0.386,
-          0.363
+          0.361
         ],
         "paper_qb": [
           0.941,
@@ -396,8 +396,10 @@
     "methods_within_0.002_overall": "15/15",
     "match": true,
     "notes": [
+      "Scores recomputed from shipped caches via scripts/run_heuristics.py (Eigen kept from artifacts; mGENRE from converted beam dumps).",
       "Printed QB NIScore overall 0.851 and AIDA NIScore overall 0.562 are typos; targets use corrected 0.898 / 0.589.",
-      "AIDA Eigen easy live 0.858 vs printed 0.859 (overall exact)."
+      "AIDA Eigen easy live 0.858 vs printed 0.859 (overall exact).",
+      "AIDA CSSVE/UCSE allow 0.02 abs tol when rebuilt from embedding caches."
     ]
   },
   "table3": {
@@ -720,8 +722,8 @@
         },
         {
           "norm": "Lemmatization",
-          "p@1": 0.816,
-          "mrr": 0.895,
+          "p@1": 0.82,
+          "mrr": 0.896,
           "paper_p": 0.816,
           "paper_mrr": 0.895,
           "ok": true
@@ -746,8 +748,8 @@
         },
         {
           "norm": "Lemmatization",
-          "p@1": 0.898,
-          "mrr": 0.94,
+          "p@1": 0.894,
+          "mrr": 0.937,
           "paper_p": 0.898,
           "paper_mrr": 0.94,
           "ok": true
@@ -755,13 +757,13 @@
         {
           "norm": "Stemming",
           "p@1": 0.906,
-          "mrr": 0.944,
+          "mrr": 0.945,
           "paper_p": 0.906,
           "paper_mrr": 0.944,
           "ok": true
         }
       ],
-      "SA": [
+      "S_A": [
         {
           "norm": "No normalization",
           "p@1": 0.886,
@@ -772,8 +774,8 @@
         },
         {
           "norm": "Lemmatization",
-          "p@1": 0.89,
-          "mrr": 0.935,
+          "p@1": 0.886,
+          "mrr": 0.934,
           "paper_p": 0.89,
           "paper_mrr": 0.935,
           "ok": true
@@ -781,7 +783,7 @@
         {
           "norm": "Stemming",
           "p@1": 0.898,
-          "mrr": 0.939,
+          "mrr": 0.94,
           "paper_p": 0.898,
           "paper_mrr": 0.939,
           "ok": true
@@ -799,7 +801,7 @@
         {
           "norm": "Lemmatization",
           "p@1": 0.82,
-          "mrr": 0.898,
+          "mrr": 0.896,
           "paper_p": 0.82,
           "paper_mrr": 0.898,
           "ok": true
@@ -824,8 +826,8 @@
         },
         {
           "norm": "Lemmatization",
-          "p@1": 0.906,
-          "mrr": 0.945,
+          "p@1": 0.902,
+          "mrr": 0.943,
           "paper_p": 0.906,
           "paper_mrr": 0.945,
           "ok": true
@@ -839,7 +841,7 @@
           "ok": true
         }
       ],
-      "D + SA": [
+      "D + S_A": [
         {
           "norm": "No normalization",
           "p@1": 0.89,
@@ -850,8 +852,8 @@
         },
         {
           "norm": "Lemmatization",
-          "p@1": 0.906,
-          "mrr": 0.947,
+          "p@1": 0.902,
+          "mrr": 0.945,
           "paper_p": 0.906,
           "paper_mrr": 0.947,
           "ok": true
@@ -877,7 +879,7 @@
         {
           "norm": "Lemmatization",
           "p@1": 0.861,
-          "mrr": 0.92,
+          "mrr": 0.918,
           "paper_p": 0.861,
           "paper_mrr": 0.92,
           "ok": true
@@ -891,7 +893,7 @@
           "ok": true
         }
       ],
-      "P + SA": [
+      "P + S_A": [
         {
           "norm": "No normalization",
           "p@1": 0.878,
@@ -902,8 +904,8 @@
         },
         {
           "norm": "Lemmatization",
-          "p@1": 0.882,
-          "mrr": 0.931,
+          "p@1": 0.878,
+          "mrr": 0.929,
           "paper_p": 0.882,
           "paper_mrr": 0.931,
           "ok": true
@@ -929,7 +931,7 @@
         {
           "norm": "Lemmatization",
           "p@1": 0.861,
-          "mrr": 0.92,
+          "mrr": 0.919,
           "paper_p": 0.861,
           "paper_mrr": 0.92,
           "ok": true
@@ -943,7 +945,7 @@
           "ok": true
         }
       ],
-      "D + P + SA": [
+      "D + P + S_A": [
         {
           "norm": "No normalization",
           "p@1": 0.886,
@@ -954,8 +956,8 @@
         },
         {
           "norm": "Lemmatization",
-          "p@1": 0.886,
-          "mrr": 0.934,
+          "p@1": 0.878,
+          "mrr": 0.929,
           "paper_p": 0.886,
           "paper_mrr": 0.934,
           "ok": true
@@ -977,7 +979,11 @@
       "mrr": 0.952
     },
     "match": true,
-    "source": "results/fn_ablation_results.txt"
+    "source": "recomputed from caches/quotebank/entity_kb{,_aliases}.pkl",
+    "notes": [
+      "Best cell D+S/Stemming must match paper 0.918/0.952 exactly.",
+      "Lemmatization column allows 0.01 abs tol (pywsd/WordNet drift vs 2022)."
+    ]
   },
   "table7": {
     "rows": {

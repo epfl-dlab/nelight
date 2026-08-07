@@ -13,11 +13,11 @@ Needs [uv](https://docs.astral.sh/uv/) and [Git LFS](https://git-lfs.com/)
 git clone https://github.com/epfl-dlab/nelight.git
 cd nelight
 git lfs install && git lfs pull
-uv sync
 bash scripts/reproduce_all.sh
 ```
 
-No GPU. Writes `artifacts/all_paper_tables.json` (Tables 1–11).
+Recomputes heuristics from the shipped caches, then rebuilds Tables 1–11.
+No GPU. Writes `artifacts/all_paper_tables.json`.
 
 More detail, re-running methods, and known typos in the PDF:
 **[REPRODUCIBILITY.md](REPRODUCIBILITY.md)**.

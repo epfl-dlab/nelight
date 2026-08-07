@@ -7,11 +7,12 @@ Paper: [Strong Heuristics for Named Entity Linking](https://aclanthology.org/202
 
 | Goal | Command | Also download |
 |---|---|---|
-| Rebuild Tables 1–11 | `uv sync` then `bash scripts/reproduce_all.sh` | nothing (use Git LFS files in the repo) |
-| Re-run popularity / text-overlap heuristics | `uv sync --extra from-scratch` | NLTK data (command below) |
+| Rebuild Tables 1–11 from caches | `bash scripts/reproduce_all.sh` | Git LFS files; installs `from-scratch` extra |
+| Re-run popularity / text-overlap heuristics | `uv sync --extra from-scratch` then `run_heuristics.py` | NLTK data (command below) |
 | Re-run embedding heuristics | same, plus `--with-embeddings` | nothing extra (embeddings are in `caches/` via LFS) |
+| Re-run IScore ablation (Table 6) | `uv run --extra from-scratch python scripts/run_iscore_ablation.py` | Quotebank entity caches (incl. aliases) |
 | Re-run mGENRE on a GPU | `bash scripts/setup_mgenre.sh` | handled by the setup script (~6 GB) |
-| Rebuild entity caches from scratch | `uv sync --extra from-scratch` | [Wikidata dump](https://dumps.wikimedia.org/wikidatawiki/entities/); optional [PageRank files](#pagerank) |
+| Rebuild entity caches from a dump | `uv sync --extra from-scratch` | [Wikidata dump](https://dumps.wikimedia.org/wikidatawiki/entities/); optional [PageRank files](#pagerank) |
 
 Install [uv](https://docs.astral.sh/uv/) once. This project uses Python **3.12**
 (`.python-version`) except live mGENRE, which uses its own Python **3.10** env.
@@ -26,25 +27,32 @@ git lfs install && git lfs pull
 
 ## 1. Rebuild the paper tables (default)
 
-Uses the saved score files from the original experiments. No GPU.
+Recomputes heuristics (and the Table 6 IScore ablation) from the shipped
+`caches/`, converts mGENRE from the original beam dumps, then rebuilds
+Tables 1–11. No GPU.
 
 ```bash
-uv sync
 bash scripts/reproduce_all.sh
 ```
 
 Output: `artifacts/all_paper_tables.json`.
 
-| Table | Contents |
+| Table | How it is produced |
 |---|---|
-| 1 | Easy / hard / overall mention counts |
-| 2 | Main accuracy (P@1) |
-| 3 | AIDA accuracy by entity type |
-| 4–11 | Appendix (errors, ablations, context size, tie-breakers, runtimes, MRR) |
+| 1 | Count easy/hard/overall splits in `data/` |
+| 2–4, 7, 9, 11 | Evaluate recomputed `artifacts/from_scratch/` scores |
+| 5 | Paper annotation category counts (arithmetic check only) |
+| 6 | Live IScore feature×normalization grid (`run_iscore_ablation.py`) |
+| 8 | mGENRE context windows from converted beam dumps |
+| 10 | Paper hardware timings (reported; not re-benchmarked) |
 
-To also recompute heuristics from the shipped caches and check them against
-Table 2: `bash scripts/audit_reproducibility.sh` (slower; needs GPU optional
-only for the embedding step).
+Eigen scores are not redistributed as a runnable tree; they are kept in the
+shipped `ranked_scores.pkl` and preserved across heuristic re-runs. AIDA
+CSSVE/UCSE can drift by up to ~1pp vs the paper when rebuilt from the
+embedding caches (tolerated in the match check).
+
+Full audit (same recompute + explicit Table-2 checks):
+`bash scripts/audit_reproducibility.sh`.
 
 ---
 
@@ -156,14 +164,13 @@ runtimes are hardware-specific.
 
 ```
 data/            evaluation sets
-score_cache/     saved method scores from the paper runs
+score_cache/     original method score dumps (fallback / mGENRE beams)
 caches/          entity DBs + embeddings (Git LFS)
-scores/          popularity baselines
-results/         IScore ablation numbers (Table 6)
+scores/          popularity baselines (optional; heuristics recompute these)
 scripts/         reproduction and runners
 runlib/          scoring code
 cache_building/  rebuild caches from Wikidata
-artifacts/       script outputs
+artifacts/       recomputed scores + table JSON
 paper/           PDF + parsed tables
 ```
 

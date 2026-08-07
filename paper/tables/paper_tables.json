@@ -81,7 +81,7 @@
   "table6_iscore_ablation": {
     "description": "IScore ablation over Wikidata features and normalization (P@1 / MRR). Best cells use stemming + D+S.",
     "best": {"combination": "D + S", "normalization": "Stemming", "p_at_1": 0.918, "mrr": 0.952},
-    "note": "Full matrix in paper Appendix E.1 / local PDF. Reproduced via scores/fn_ablation_scores.pkl + code/experiments.py"
+    "note": "Full matrix in paper Appendix E.1. Recomputed by scripts/run_iscore_ablation.py from caches/quotebank/entity_kb{,_aliases}.pkl"
   },
   "table7_context_size": {
     "description": "CSE / IScore narrow vs entire vs ensemble",

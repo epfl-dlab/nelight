@@ -1,0 +1,269 @@
+{
+  "rows": {
+    "D": {
+      "No normalization": {
+        "p@1": 0.869,
+        "mrr": 0.921,
+        "paper_p": 0.869,
+        "paper_mrr": 0.921,
+        "ok": true
+      },
+      "Lemmatization": {
+        "p@1": 0.89,
+        "mrr": 0.93,
+        "paper_p": 0.89,
+        "paper_mrr": 0.93,
+        "ok": true
+      },
+      "Stemming": {
+        "p@1": 0.894,
+        "mrr": 0.934,
+        "paper_p": 0.894,
+        "paper_mrr": 0.934,
+        "ok": true
+      }
+    },
+    "P": {
+      "No normalization": {
+        "p@1": 0.833,
+        "mrr": 0.903,
+        "paper_p": 0.832,
+        "paper_mrr": 0.903,
+        "ok": true
+      },
+      "Lemmatization": {
+        "p@1": 0.82,
+        "mrr": 0.896,
+        "paper_p": 0.816,
+        "paper_mrr": 0.895,
+        "ok": true
+      },
+      "Stemming": {
+        "p@1": 0.833,
+        "mrr": 0.902,
+        "paper_p": 0.832,
+        "paper_mrr": 0.902,
+        "ok": true
+      }
+    },
+    "S": {
+      "No normalization": {
+        "p@1": 0.894,
+        "mrr": 0.936,
+        "paper_p": 0.894,
+        "paper_mrr": 0.936,
+        "ok": true
+      },
+      "Lemmatization": {
+        "p@1": 0.894,
+        "mrr": 0.937,
+        "paper_p": 0.898,
+        "paper_mrr": 0.94,
+        "ok": true
+      },
+      "Stemming": {
+        "p@1": 0.906,
+        "mrr": 0.945,
+        "paper_p": 0.906,
+        "paper_mrr": 0.944,
+        "ok": true
+      }
+    },
+    "S_A": {
+      "No normalization": {
+        "p@1": 0.886,
+        "mrr": 0.932,
+        "paper_p": 0.886,
+        "paper_mrr": 0.932,
+        "ok": true
+      },
+      "Lemmatization": {
+        "p@1": 0.886,
+        "mrr": 0.934,
+        "paper_p": 0.89,
+        "paper_mrr": 0.935,
+        "ok": true
+      },
+      "Stemming": {
+        "p@1": 0.898,
+        "mrr": 0.94,
+        "paper_p": 0.898,
+        "paper_mrr": 0.939,
+        "ok": true
+      }
+    },
+    "D + P": {
+      "No normalization": {
+        "p@1": 0.841,
+        "mrr": 0.907,
+        "paper_p": 0.841,
+        "paper_mrr": 0.907,
+        "ok": true
+      },
+      "Lemmatization": {
+        "p@1": 0.82,
+        "mrr": 0.896,
+        "paper_p": 0.82,
+        "paper_mrr": 0.898,
+        "ok": true
+      },
+      "Stemming": {
+        "p@1": 0.841,
+        "mrr": 0.906,
+        "paper_p": 0.841,
+        "paper_mrr": 0.906,
+        "ok": true
+      }
+    },
+    "D + S": {
+      "No normalization": {
+        "p@1": 0.902,
+        "mrr": 0.943,
+        "paper_p": 0.902,
+        "paper_mrr": 0.943,
+        "ok": true
+      },
+      "Lemmatization": {
+        "p@1": 0.902,
+        "mrr": 0.943,
+        "paper_p": 0.906,
+        "paper_mrr": 0.945,
+        "ok": true
+      },
+      "Stemming": {
+        "p@1": 0.918,
+        "mrr": 0.952,
+        "paper_p": 0.918,
+        "paper_mrr": 0.952,
+        "ok": true
+      }
+    },
+    "D + S_A": {
+      "No normalization": {
+        "p@1": 0.89,
+        "mrr": 0.937,
+        "paper_p": 0.89,
+        "paper_mrr": 0.937,
+        "ok": true
+      },
+      "Lemmatization": {
+        "p@1": 0.902,
+        "mrr": 0.945,
+        "paper_p": 0.906,
+        "paper_mrr": 0.947,
+        "ok": true
+      },
+      "Stemming": {
+        "p@1": 0.914,
+        "mrr": 0.95,
+        "paper_p": 0.914,
+        "paper_mrr": 0.95,
+        "ok": true
+      }
+    },
+    "P + S": {
+      "No normalization": {
+        "p@1": 0.861,
+        "mrr": 0.919,
+        "paper_p": 0.861,
+        "paper_mrr": 0.919,
+        "ok": true
+      },
+      "Lemmatization": {
+        "p@1": 0.861,
+        "mrr": 0.918,
+        "paper_p": 0.861,
+        "paper_mrr": 0.92,
+        "ok": true
+      },
+      "Stemming": {
+        "p@1": 0.873,
+        "mrr": 0.925,
+        "paper_p": 0.873,
+        "paper_mrr": 0.925,
+        "ok": true
+      }
+    },
+    "P + S_A": {
+      "No normalization": {
+        "p@1": 0.878,
+        "mrr": 0.928,
+        "paper_p": 0.878,
+        "paper_mrr": 0.928,
+        "ok": true
+      },
+      "Lemmatization": {
+        "p@1": 0.878,
+        "mrr": 0.929,
+        "paper_p": 0.882,
+        "paper_mrr": 0.931,
+        "ok": true
+      },
+      "Stemming": {
+        "p@1": 0.882,
+        "mrr": 0.93,
+        "paper_p": 0.882,
+        "paper_mrr": 0.93,
+        "ok": true
+      }
+    },
+    "D + P + S": {
+      "No normalization": {
+        "p@1": 0.861,
+        "mrr": 0.921,
+        "paper_p": 0.861,
+        "paper_mrr": 0.921,
+        "ok": true
+      },
+      "Lemmatization": {
+        "p@1": 0.861,
+        "mrr": 0.919,
+        "paper_p": 0.861,
+        "paper_mrr": 0.92,
+        "ok": true
+      },
+      "Stemming": {
+        "p@1": 0.873,
+        "mrr": 0.926,
+        "paper_p": 0.873,
+        "paper_mrr": 0.926,
+        "ok": true
+      }
+    },
+    "D + P + S_A": {
+      "No normalization": {
+        "p@1": 0.886,
+        "mrr": 0.934,
+        "paper_p": 0.886,
+        "paper_mrr": 0.934,
+        "ok": true
+      },
+      "Lemmatization": {
+        "p@1": 0.878,
+        "mrr": 0.929,
+        "paper_p": 0.886,
+        "paper_mrr": 0.934,
+        "ok": true
+      },
+      "Stemming": {
+        "p@1": 0.882,
+        "mrr": 0.93,
+        "paper_p": 0.882,
+        "paper_mrr": 0.93,
+        "ok": true
+      }
+    }
+  },
+  "best": {
+    "combination": "D + S",
+    "normalization": "Stemming",
+    "p@1": 0.918,
+    "mrr": 0.952
+  },
+  "match": true,
+  "source": "recomputed from caches/quotebank/entity_kb{,_aliases}.pkl",
+  "notes": [
+    "Best cell D+S/Stemming must match paper 0.918/0.952 exactly.",
+    "Lemmatization column allows 0.01 abs tol (pywsd/WordNet drift vs 2022)."
+  ]
+}

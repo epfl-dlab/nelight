@@ -506,21 +506,34 @@ def main():
     aida_overall = load_json(DATA / "AIDA" / "overall.json")
     aida_types = load_json(DATA / "AIDA" / "entity_types.json")
 
-    print("Loading Quotebank scores...", flush=True)
-    qb_methods = load_qb_method_scores(pop, qb_data)
-    if "_mgenre_candidates" in qb_methods:
-        qb_gt_items = flatten_gt(qb_overall)
-        best, best_p = qb_methods["mGENRE"], -1.0
-        for cand in qb_methods["_mgenre_candidates"]:
-            p = precision_at_one_qb(qb_gt_items, cand)
-            if p > best_p:
-                best, best_p = cand, p
-        qb_methods["mGENRE"] = best
-        del qb_methods["_mgenre_candidates"]
-        print(f"  selected mGENRE candidate with QB overall P@1={best_p:.3f}", flush=True)
+    fs_qb = OUT_DIR / "from_scratch" / "quotebank" / "ranked_scores.pkl"
+    fs_aida = OUT_DIR / "from_scratch" / "aida" / "ranked_scores.pkl"
 
-    print("Loading AIDA scores...", flush=True)
-    aida_methods = load_aida_method_scores(pop, aida_data)
+    if fs_qb.exists():
+        print(f"Loading Quotebank scores from {fs_qb} (recomputed)...", flush=True)
+        qb_methods = {k: normalize_scores(v) for k, v in load_pickle(fs_qb).items()}
+    else:
+        print("Loading Quotebank scores from score_cache dumps...", flush=True)
+        qb_methods = load_qb_method_scores(pop, qb_data)
+        if "_mgenre_candidates" in qb_methods:
+            qb_gt_items = flatten_gt(qb_overall)
+            best, best_p = qb_methods["mGENRE"], -1.0
+            for cand in qb_methods["_mgenre_candidates"]:
+                p = precision_at_one_qb(qb_gt_items, cand)
+                if p > best_p:
+                    best, best_p = cand, p
+            qb_methods["mGENRE"] = best
+            del qb_methods["_mgenre_candidates"]
+            print(f"  selected mGENRE candidate with QB overall P@1={best_p:.3f}", flush=True)
+
+    if fs_aida.exists():
+        print(f"Loading AIDA scores from {fs_aida} (recomputed)...", flush=True)
+        aida_methods = {k: normalize_scores(v) for k, v in load_pickle(fs_aida).items()}
+        for k in list(aida_methods):
+            aida_methods[k] = assign_unambiguous(aida_methods[k], aida_data)
+    else:
+        print("Loading AIDA scores from score_cache dumps...", flush=True)
+        aida_methods = load_aida_method_scores(pop, aida_data)
 
     # Random baselines
     qb_rand_p, qb_rand_m = eval_random_qb(qb_data, flatten_gt(qb_overall))

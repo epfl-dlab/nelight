@@ -447,6 +447,23 @@ def run_dataset(
         print(f"\n=== {dataset}: wrote scores (no gold splits; skipped P@1) ===")
         print("Methods:", ", ".join(m for m in methods if m in ranked))
 
+    # Keep Eigen / mGENRE from a previous ranked bundle or dedicated pickles.
+    # Those methods are not recomputed by this script (Eigenthemes tree / GPU).
+    prev_path = ds_out / "ranked_scores.pkl"
+    if prev_path.exists():
+        prev = load_pickle(prev_path)
+        for key in ("Eigen", "Eigen (IScore)", "Eigen_IScore", "mGENRE"):
+            if key in prev and key not in ranked:
+                ranked[key] = prev[key]
+    if "mGENRE" not in ranked:
+        for name in ("mGENRE_best.pkl", "mGENRE_t128.pkl", "mGENRE_t256.pkl"):
+            cand = ds_out / name
+            if cand.exists():
+                ranked["mGENRE"] = load_pickle(cand)
+                break
+    if "Eigen (IScore)" not in ranked and "Eigen_IScore" in ranked:
+        ranked["Eigen (IScore)"] = ranked["Eigen_IScore"]
+
     save_pickle(ranked, ds_out / "ranked_scores.pkl")
     with open(ds_out / "metrics.json", "w") as f:
         json.dump(results, f, indent=2)

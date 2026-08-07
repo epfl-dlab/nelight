@@ -43,11 +43,16 @@ class EntityContentSimilarityScorer(KnowledgeGraphSemanticScorer):
         self._props_to_avoid = [] if props_to_avoid is None else props_to_avoid
         self._props_to_keep = props_to_keep
         self._attribute_weigts = []
+        # Memoize expensive lemmatize/stem BOW and article tokenization.
+        self._bow_cache = {}
+        self._content_cache = {}
 
     def _remove_name(self, name, article_content_tokens):
         return article_content_tokens.difference(set(self._treebank_tokenizer.tokenize(name)))
 
-    def _preprocess_content(self, article_content, remove_stopwords=True):
+    def _preprocess_content(self, article_content, remove_stopwords=True, cache_key=None):
+        if cache_key is not None and cache_key in self._content_cache:
+            return set(self._content_cache[cache_key])
         article_content = article_content.replace(u'\xa0', u' ').lower()
         if self._lemmatizer:
             article_content = lemmatize_sentence(article_content)
@@ -59,9 +64,13 @@ class EntityContentSimilarityScorer(KnowledgeGraphSemanticScorer):
             tokens = set(tokens).difference(stopwords.words('english'))
         if self._stemmer:
             tokens = set([self._stemmer.stem(token) for token in tokens])
+        if cache_key is not None:
+            self._content_cache[cache_key] = frozenset(tokens)
         return tokens
 
     def _get_wikidata_bow(self, qid):
+        if qid in self._bow_cache:
+            return self._bow_cache[qid]
         entity_dict = self.wiki_cache[qid]
         bow = set()
         if self._props_to_keep is not None:
@@ -81,7 +90,8 @@ class EntityContentSimilarityScorer(KnowledgeGraphSemanticScorer):
                     bow.update(set([token for token in tokens if re.match('[a-zA-Z]', token)]))
         else:
             for i, j in entity_dict.items():
-                if i in {'n_statements', 'n_sitelinks', 'pagerank', 'pagerank_wd', 'indeg', 'outdeg', *self._props_to_avoid}:
+                if i in {'n_statements', 'n_sitelinks', 'pagerank', 'pagerank_wd',
+                         'indeg', 'outdeg', 'degree', *self._props_to_avoid}:
                     continue
 
                 if re.match('^P[0-9]+$', i) or i == 'description' or i == 'first_paragraph':
@@ -96,11 +106,15 @@ class EntityContentSimilarityScorer(KnowledgeGraphSemanticScorer):
                         if self._stemmer:
                             tokens = set([self._stemmer.stem(token) for token in tokens])
                         bow.update(set([token for token in tokens if re.match('[a-zA-Z]', token)]))
+        self._bow_cache[qid] = bow
         return bow
 
     def iscore(self, name, article):
         article_content = article['content']
-        article_content_tokens = self._preprocess_content(article_content)
+        cache_key = article.get('articleID')
+        article_content_tokens = self._preprocess_content(
+            article_content, cache_key=cache_key
+        )
 
         return np.array([self._iscore_single(name['name'], qid, article_content_tokens) for qid in name['ids']])
 
