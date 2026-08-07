@@ -121,7 +121,7 @@ def table2():
         "match": n_ok == len(rows),
         "notes": [
             "Scores recomputed from shipped caches via scripts/run_heuristics.py "
-            "(Eigen kept from artifacts; mGENRE from converted beam dumps).",
+            "(Eigen from Eigenthemes research tree when available; mGENRE from beam dumps).",
             "Printed QB NIScore overall 0.851 and AIDA NIScore overall 0.562 are typos; "
             "targets use corrected 0.898 / 0.589.",
             "AIDA Eigen easy live 0.858 vs printed 0.859 (overall exact).",

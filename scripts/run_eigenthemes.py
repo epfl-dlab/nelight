@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import os
 import pickle
 import re
 import sys
@@ -19,8 +20,39 @@ from pathlib import Path
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
-EIGEN_DIR = ROOT / "workspace" / "eigenthemes"
 OUT = ROOT / "artifacts" / "from_scratch"
+
+
+def resolve_eigen_dir() -> Path:
+    """Find the Eigenthemes research tree.
+
+    Search order:
+      1. ``$NELIGHT_EIGENTHEMES``
+      2. ``workspace/eigenthemes`` (symlink or checkout)
+      3. sibling Drive trees under ``~/gdrive-download/...``
+    """
+    env = os.environ.get("NELIGHT_EIGENTHEMES")
+    candidates = []
+    if env:
+        candidates.append(Path(env))
+    candidates.append(ROOT / "workspace" / "eigenthemes")
+    home = Path.home()
+    candidates.extend(
+        [
+            home
+            / "gdrive-download/downloads2/speaker-disambiguation-quotebank/eigenthemes",
+            home / "gdrive-download/downloads/quotebank_el/eigenthemes",
+        ]
+    )
+    for cand in candidates:
+        if (cand / "unsupervised_el.py").is_file() and (
+            cand / "embeddings" / "deepwalk_wikidata.pickle"
+        ).is_file():
+            return cand.resolve()
+    return (ROOT / "workspace" / "eigenthemes").resolve()
+
+
+EIGEN_DIR = resolve_eigen_dir()
 EMB = EIGEN_DIR / "embeddings" / "deepwalk_wikidata.pickle"
 
 _ns: dict = {}
@@ -90,12 +122,31 @@ def reweight_eigen_json(eigen_data: dict, score_dict: dict, dataset: str) -> dic
     return out
 
 
+def _patch_legacy_deps():
+    """Compatibility shims for Eigenthemes (NumPy 1.x / older scikit-learn)."""
+    for name, typ in (("float", float), ("int", int), ("bool", bool)):
+        if not hasattr(np, name):
+            setattr(np, name, typ)
+    # scikit-learn ≥1.6 renamed force_all_finite → ensure_all_finite
+    import sklearn.utils.validation as skval
+
+    if not getattr(skval.check_array, "_nelight_force_all_finite_patch", False):
+        _orig = skval.check_array
+
+        def _check_array(*args, **kwargs):
+            if "force_all_finite" in kwargs and "ensure_all_finite" not in kwargs:
+                kwargs["ensure_all_finite"] = kwargs.pop("force_all_finite")
+            return _orig(*args, **kwargs)
+
+        _check_array._nelight_force_all_finite_patch = True  # type: ignore[attr-defined]
+        skval.check_array = _check_array  # type: ignore[assignment]
+
+
 def run_weigen(eigen_json_path: Path, tag: str):
     """Execute Eigenthemes computeScores; return raw dict with weigen rows."""
     sys.path.insert(0, str(EIGEN_DIR))
     os_chdir = Path.cwd()
-    import os
-
+    _patch_legacy_deps()
     os.chdir(EIGEN_DIR)
     try:
         src = open("unsupervised_el.py").read().split("\ndatasets =")[0]
@@ -219,19 +270,19 @@ def main():
                     help="Reuse existing eigen_raw_*.pkl for ns variant")
     args = ap.parse_args()
 
-    if not EIGEN_DIR.is_dir():
+    if not (EIGEN_DIR / "unsupervised_el.py").is_file() or not EMB.exists():
         raise SystemExit(
-            f"Eigenthemes tree not found at {EIGEN_DIR}.\n"
-            "Place the original research checkout there (DeepWalk embeddings + "
-            "data/*_test_complete.json). Table reproduction does not need this — "
-            "Eigen scores are already in artifacts/from_scratch/*/ranked_scores.pkl.\n"
+            "Eigenthemes tree not found.\n"
+            "Expected DeepWalk embeddings + unsupervised_el.py under one of:\n"
+            "  $NELIGHT_EIGENTHEMES\n"
+            "  workspace/eigenthemes\n"
+            "  ~/gdrive-download/downloads2/speaker-disambiguation-quotebank/eigenthemes\n"
+            "Symlink example:\n"
+            "  ln -sfn /path/to/speaker-disambiguation-quotebank/eigenthemes "
+            "workspace/eigenthemes\n"
             "See REPRODUCIBILITY.md § Eigenthemes."
         )
-    if not EMB.exists():
-        raise SystemExit(
-            f"Missing DeepWalk embeddings at {EMB}.\n"
-            "See REPRODUCIBILITY.md § Eigenthemes."
-        )
+    print(f"Using Eigenthemes tree: {EIGEN_DIR}", flush=True)
 
     pop = load_pk(ROOT / "scores/popularity_scores.pkl")
     datasets = ["quotebank", "aida"] if args.dataset == "both" else [args.dataset]
@@ -349,13 +400,29 @@ def main():
 
             save_pk(scores, ds_out / out_name)
 
+            # Merge into ranked_scores.pkl used by table scripts.
+            ranked_path = ds_out / "ranked_scores.pkl"
+            ranked = load_pk(ranked_path) if ranked_path.exists() else {}
             if dataset == "quotebank":
                 ns = normalize_scores(pop["qb"]["ns"])
                 lqid = normalize_scores(pop["qb"]["lqid"])
                 # Paper Appendix E.3: Eigen* → NS → LQID
+                ranked_scores = scores
+                for tb in (ns, lqid):
+                    ranked_scores = same_score_rank_ensemble(
+                        normalize_scores(ranked_scores), tb,
+                        load_json(ROOT / "data/Quotebank/data.json"),
+                    )
+                ranked[method] = ranked_scores
                 metrics = eval_triple(dataset, scores, [ns, lqid])
             else:
+                data_a = load_json(ROOT / "data/AIDA/data.json")
+                ranked[method] = assign_unambiguous(normalize_scores(scores), data_a)
                 metrics = eval_triple(dataset, scores)
+            if method == "Eigen (IScore)":
+                ranked["Eigen_IScore"] = ranked[method]
+            save_pk(ranked, ranked_path)
+            print(f"merged {method} into {ranked_path}", flush=True)
             print(f"{method} P@1 e/h/o = {metrics[0]:.3f}/{metrics[1]:.3f}/{metrics[2]:.3f}")
 
 

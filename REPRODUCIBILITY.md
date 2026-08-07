@@ -11,6 +11,7 @@ Paper: [Strong Heuristics for Named Entity Linking](https://aclanthology.org/202
 | Re-run popularity / text-overlap heuristics | `uv sync --extra from-scratch` then `run_heuristics.py` | NLTK data (command below) |
 | Re-run embedding heuristics | same, plus `--with-embeddings` | nothing extra (embeddings are in `caches/` via LFS) |
 | Re-run IScore ablation (Table 6) | `uv run --extra from-scratch python scripts/run_iscore_ablation.py` | Quotebank entity caches (incl. aliases) |
+| Re-run Eigenthemes | `uv sync --extra eigenthemes` + `run_eigenthemes.py` | research tree under `speaker-disambiguation-quotebank/eigenthemes` (see §4) |
 | Re-run mGENRE on a GPU | `bash scripts/setup_mgenre.sh` | handled by the setup script (~6 GB) |
 | Rebuild entity caches from a dump | `uv sync --extra from-scratch` | [Wikidata dump](https://dumps.wikimedia.org/wikidatawiki/entities/); optional [PageRank files](#pagerank) |
 
@@ -114,16 +115,26 @@ Quotebank and 45–60 minutes for AIDA after a few minutes of model load.
 
 ## 4. Eigenthemes
 
-Table 2 Eigen numbers are already in
+Table 2 Eigen numbers ship in
 `artifacts/from_scratch/{quotebank,aida}/ranked_scores.pkl`.
 
-Re-running Eigenthemes needs the original research tree (DeepWalk embeddings and
-candidate lists). Those files are **not** redistributed here. If you have them:
+To **recompute** them, point at the research trees from the original project
+(Drive folders `quotebank_el` + `speaker-disambiguation-quotebank`):
 
 ```bash
-# place at workspace/eigenthemes/
-uv run python scripts/run_eigenthemes.py --dataset both --variant both
+# once: link the Eigenthemes checkout (contains DeepWalk + candidate JSONs)
+ln -sfn /path/to/speaker-disambiguation-quotebank/eigenthemes workspace/eigenthemes
+# quotebank_*_test_complete.json may live under quotebank_el; the tree already
+# symlinks there, or set NELIGHT_EIGENTHEMES=/path/to/eigenthemes
+
+uv sync --extra eigenthemes
+uv run --extra eigenthemes python scripts/run_eigenthemes.py --dataset both --variant both
 ```
+
+`run_eigenthemes.py` also auto-discovers
+`~/gdrive-download/downloads2/speaker-disambiguation-quotebank/eigenthemes`
+when present. It writes `Eigen_live_weigen.pkl` / `Eigen_IScore_live_weigen.pkl`
+and merges them into `ranked_scores.pkl`.
 
 ---
 

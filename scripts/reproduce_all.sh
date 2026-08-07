@@ -25,7 +25,17 @@ run python scripts/run_heuristics.py --dataset both --with-embeddings
 echo "=== 3. Recompute IScore ablation (Table 6) ==="
 run python scripts/run_iscore_ablation.py
 
-echo "=== 4. Materialize mGENRE score dicts from original beam dumps ==="
+echo "=== 4. Recompute Eigenthemes (if research tree is available) ==="
+if uv sync --frozen --extra from-scratch --extra eigenthemes >/tmp/nelight_eigen_sync.txt 2>&1 \
+   && uv run --frozen --extra from-scratch --extra eigenthemes \
+        python scripts/run_eigenthemes.py --dataset both --variant both; then
+  echo "Eigenthemes recomputed and merged into ranked_scores.pkl"
+else
+  echo "Eigenthemes skipped (tree/deps missing); using shipped Eigen scores."
+  echo "See REPRODUCIBILITY.md § Eigenthemes."
+fi
+
+echo "=== 5. Materialize mGENRE score dicts from original beam dumps ==="
 run python scripts/convert_mgenre_raw.py
 # Ensure mGENRE lands in ranked_scores after convert
 run python - <<'PY'
@@ -45,13 +55,13 @@ for ds, pref in [("quotebank", "mGENRE_t128.pkl"), ("aida", "mGENRE_t256.pkl")]:
     print(f"merged mGENRE into {ranked_p}")
 PY
 
-echo "=== 5. Table 2 / 3 / 11 from recomputed scores ==="
+echo "=== 6. Table 2 / 3 / 11 from recomputed scores ==="
 run python scripts/reproduce_tables.py
 
-echo "=== 6. Table 2 cross-check (from_scratch artifacts) ==="
+echo "=== 7. Table 2 cross-check (from_scratch artifacts) ==="
 run python scripts/reproduce_paper_from_scratch.py
 
-echo "=== 7. All paper tables 1–11 ==="
+echo "=== 8. All paper tables 1–11 ==="
 run python scripts/reproduce_all_paper_tables.py
 
 echo "=== Done ==="

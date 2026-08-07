@@ -19,6 +19,11 @@ from-scratch = [
     "nltk>=3.6",
     "pywsd>=1.2",
 ]
+# Live Eigenthemes (DeepWalk + PCA) from the research tree.
+eigenthemes = [
+    "gensim>=4.0",
+    "scikit-learn>=1.0",
+]
 
 [build-system]
 requires = ["hatchling"]
