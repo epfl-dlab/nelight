@@ -1,30 +1,43 @@
+"""Entity/content scorers — Drive originals with packaging + numpy cosine helpers."""
+
 import re
 
 import numpy as np
-
-from pywsd.utils import lemmatize_sentence
-from nltk import WordNetLemmatizer, PorterStemmer, TreebankWordTokenizer
-from nltk.tokenize.treebank import TreebankWordDetokenizer
+from nltk import PorterStemmer, TreebankWordTokenizer, WordNetLemmatizer
 from nltk.corpus import stopwords
+from nltk.tokenize.treebank import TreebankWordDetokenizer
+from pywsd.utils import lemmatize_sentence
+
 from runlib.scoring import Scorer
 from runlib.scoring._emb import cosine, mean_vec, stack_mean
-from runlib.utils.processing import *
+from runlib.utils.processing import sentences_with_name
+
+# Kept for parity with the research tree (unused here).
+special_characters = {
+    '.', ',', ')', '(', '/', '\\', '<', '>', '+', '-', '!', '?', '@', '"', '#',
+    '$', '%', '&', '=', '[', ']', '{', '}', "'", '~', '*', '_', ':',
+}
+
 
 class KnowledgeGraphSemanticScorer(Scorer):
     def score(self, name, article_content):
         return self.scorer(name, article_content)
 
+
 class EntityContentSimilarityScorer(KnowledgeGraphSemanticScorer):
-    def __init__(self, scorer, wiki_cache=None,
-                 stem=False,
-                 lemmatize=False,
-                 props_to_avoid=None,
-                 props_to_keep=None,
-                 qid_wiki_cache=None,
-                 attribute_weights=None,
-                 embeddings_cache=None,
-                 content_embeddings_cache=None,
-                 sentence_embeddings_cache=None):
+    def __init__(
+        self,
+        scorer,
+        wiki_cache=None,
+        stem=False,
+        lemmatize=False,
+        props_to_avoid=None,
+        props_to_keep=None,
+        qid_wiki_cache=None,
+        embeddings_cache=None,
+        content_embeddings_cache=None,
+        sentence_embeddings_cache=None,
+    ):
         super().__init__(scorer)
 
         self.wiki_cache = wiki_cache
@@ -39,12 +52,14 @@ class EntityContentSimilarityScorer(KnowledgeGraphSemanticScorer):
         self._props_to_avoid = [] if props_to_avoid is None else props_to_avoid
         self._props_to_keep = props_to_keep
         self._attribute_weigts = []
-        # Memoize expensive lemmatize/stem BOW and article tokenization.
+        # Memoize BOW / article tokens (score-identical; speeds IScore).
         self._bow_cache = {}
         self._content_cache = {}
 
     def _remove_name(self, name, article_content_tokens):
-        return article_content_tokens.difference(set(self._treebank_tokenizer.tokenize(name)))
+        return article_content_tokens.difference(
+            set(self._treebank_tokenizer.tokenize(name))
+        )
 
     def _preprocess_content(self, article_content, remove_stopwords=True, cache_key=None):
         if cache_key is not None and cache_key in self._content_cache:
@@ -83,11 +98,13 @@ class EntityContentSimilarityScorer(KnowledgeGraphSemanticScorer):
                     tokens = self._treebank_tokenizer.tokenize(value.lower())
                     if self._stemmer:
                         tokens = set([self._stemmer.stem(token) for token in tokens])
-                    bow.update(set([token for token in tokens if re.match('[a-zA-Z]', token)]))
+                    bow.update(set([token for token in tokens if re.match('[a-zA-Z0-9].+', token)]))
         else:
             for i, j in entity_dict.items():
-                if i in {'n_statements', 'n_sitelinks', 'pagerank', 'pagerank_wd',
-                         'indeg', 'outdeg', 'degree', *self._props_to_avoid}:
+                if i in {
+                    'n_statements', 'n_sitelinks', 'pagerank', 'pagerank_wd',
+                    'indeg', 'outdeg', *self._props_to_avoid,
+                }:
                     continue
 
                 if re.match('^P[0-9]+$', i) or i == 'description' or i == 'first_paragraph':
@@ -112,7 +129,10 @@ class EntityContentSimilarityScorer(KnowledgeGraphSemanticScorer):
             article_content, cache_key=cache_key
         )
 
-        return np.array([self._iscore_single(name['name'], qid, article_content_tokens) for qid in name['ids']])
+        return np.array([
+            self._iscore_single(name['name'], qid, article_content_tokens)
+            for qid in name['ids']
+        ])
 
     def _iscore_single(self, name, qid, article_content):
         try:
@@ -128,7 +148,10 @@ class EntityContentSimilarityScorer(KnowledgeGraphSemanticScorer):
         article_content = ' '.join(sentences_with_name(name, article_content))
         article_content_tokens = self._preprocess_content(article_content)
 
-        return np.array([self._iscore_single(name['name'], qid, article_content_tokens) for qid in name['ids']])
+        return np.array([
+            self._iscore_single(name['name'], qid, article_content_tokens)
+            for qid in name['ids']
+        ])
 
     def _paragraph_content_single(self, qid, article_id):
         if qid not in self.embedding_cache or 'first_paragraph' not in self.embedding_cache[qid]:
@@ -141,7 +164,9 @@ class EntityContentSimilarityScorer(KnowledgeGraphSemanticScorer):
 
     def paragraph_content_embeddings(self, name, article):
         article_id = article['articleID']
-        return np.array([self._paragraph_content_single(qid, article_id) for qid in name['ids']])
+        return np.array([
+            self._paragraph_content_single(qid, article_id) for qid in name['ids']
+        ])
 
     def _paragraph_content_narrow_single(self, qid, name, article_id):
         if qid not in self.embedding_cache or 'first_paragraph' not in self.embedding_cache[qid]:
@@ -157,8 +182,10 @@ class EntityContentSimilarityScorer(KnowledgeGraphSemanticScorer):
 
     def paragraph_content_narrow(self, name, article):
         article_id = article['articleID']
-        return np.array(
-            [self._paragraph_content_narrow_single(qid, name['name'], article['articleID']) for qid in name['ids']])
+        return np.array([
+            self._paragraph_content_narrow_single(qid, name['name'], article_id)
+            for qid in name['ids']
+        ])
 
     def _paragraph_or_props_single(self, qid, article_id):
         if qid not in self.embedding_cache or len(self.embedding_cache[qid]) == 0:
@@ -173,10 +200,11 @@ class EntityContentSimilarityScorer(KnowledgeGraphSemanticScorer):
         else:
             return self._paragraph_content_single(qid, article_id)
 
-    def paragraph_or_props(self, name, article):
+    def cse(self, name, article):
         article_id = article['articleID']
-        return np.array(
-            [self._paragraph_or_props_single(qid, article_id) for qid in name['ids']])
+        return np.array([
+            self._paragraph_or_props_single(qid, article_id) for qid in name['ids']
+        ])
 
     def _paragraph_or_props_narrow_single(self, qid, name, article_id):
         if qid not in self.embedding_cache or len(self.embedding_cache[qid]) == 0:
@@ -190,15 +218,12 @@ class EntityContentSimilarityScorer(KnowledgeGraphSemanticScorer):
         else:
             return self._paragraph_content_narrow_single(qid, name, article_id)
 
-    def paragraph_or_props_narrow(self,  name, article):
+    def ncse(self, name, article):
         article_id = article['articleID']
-        return np.array([self._paragraph_or_props_narrow_single(qid, name['name'], article_id) for qid in name['ids']])
-
-    def weighted_iscore(self):
-        pass
-
-    def weighted_iscore_discriminative(self):
-        pass
+        return np.array([
+            self._paragraph_or_props_narrow_single(qid, name['name'], article_id)
+            for qid in name['ids']
+        ])
 
 
 class KnowledgeGraphEntityEntityScorer(Scorer):
@@ -207,16 +232,17 @@ class KnowledgeGraphEntityEntityScorer(Scorer):
 
 
 class EntityEntitySimilarityScorer(KnowledgeGraphSemanticScorer):
-    def __init__(self, scorer, wiki_cache,
-                 stem=False,
-                 lemmatize=False,
-                 props_to_avoid=None,
-                 props_to_keep=None,
-                 qid_wikicache_path=None,
-                 attribute_weights=None,
-                 embeddings_cache=None,
-                 unambiguous_cache=None):
-
+    def __init__(
+        self,
+        scorer,
+        wiki_cache,
+        stem=False,
+        lemmatize=False,
+        props_to_avoid=None,
+        props_to_keep=None,
+        embeddings_cache=None,
+        unambiguous_cache=None,
+    ):
         super().__init__(scorer)
 
         self.wiki_cache = wiki_cache
@@ -228,41 +254,6 @@ class EntityEntitySimilarityScorer(KnowledgeGraphSemanticScorer):
         self._treebank_detokenizer = TreebankWordDetokenizer()
         self._props_to_avoid = [] if props_to_avoid is None else props_to_avoid
         self._props_to_keep = props_to_keep
-        self._attribute_weights = []
-
-    def _get_wikidata_bow(self, qid):
-        entity_dict = self.wiki_cache[qid]
-        bow = set()
-
-        if self._props_to_keep is not None:
-            for prop in self._props_to_keep:
-                values = self.wiki_cache[qid][prop]
-                for value in values:
-                    if self._lemmatizer:
-                        value = lemmatize_sentence(value)
-                        value = self._treebank_detokenizer.detokenize(value).lower()
-
-                    tokens = self._treebank_tokenizer.tokenize(value.lower())
-                    if self._stemmer:
-                        tokens = set([self._stemmer.stem(token) for token in tokens])
-                    bow.update(set([token for token in tokens if re.match('[a-zA-Z]', token)]))
-
-        else:
-            for i, j in entity_dict.items():
-                if i in {'n_statements', 'n_sitelinks', 'pagerank', *self._props_to_avoid}:
-                    continue
-
-                if re.match('^P[0-9]+$', i) or i == 'description':
-                    for value in j:
-                        if self._lemmatizer:
-                            value = lemmatize_sentence(value)
-                            value = self._treebank_detokenizer.detokenize(value).lower()
-
-                        tokens = self._treebank_tokenizer.tokenize(value.lower())
-                        if self._stemmer:
-                            tokens = set([self._stemmer.stem(token) for token in tokens])
-                        bow.update(set([token for token in tokens if re.match('[a-zA-Z]', token)]))
-        return bow
 
     def _matching_attributes_emb_single(self, qid, article_id):
         if len(self.unambiguous_cache[article_id]) == 0:
@@ -275,7 +266,9 @@ class EntityEntitySimilarityScorer(KnowledgeGraphSemanticScorer):
                 continue
             entity_dict = self.embedding_cache[qid]
             for prop, embeddings in unambiguous_entity_embeddings.items():
-                if prop not in entity_dict or prop in {'first_paragraph', 'n_statements', 'n_sitelinks', 'pagerank'}:
+                if prop not in entity_dict or prop in {
+                    'first_paragraph', 'n_statements', 'n_sitelinks', 'pagerank',
+                }:
                     continue
 
                 entity_embeddings = entity_dict[prop]
@@ -288,8 +281,11 @@ class EntityEntitySimilarityScorer(KnowledgeGraphSemanticScorer):
                 score += sum(prop_scores)
         return score
 
-    def matching_attributes_emb(self, name, article):
-        return np.array([self._matching_attributes_emb_single(qid, article['articleID']) for qid in name['ids']])
+    def cssve(self, name, article):
+        return np.array([
+            self._matching_attributes_emb_single(qid, article['articleID'])
+            for qid in name['ids']
+        ])
 
     def _matching_attributes_single(self, qid, article_id):
         if len(self.unambiguous_cache[article_id]) == 0:
@@ -304,7 +300,10 @@ class EntityEntitySimilarityScorer(KnowledgeGraphSemanticScorer):
                 continue
             entity_dict = self.wiki_cache[qid]
             for prop, values in unambiguous_entity_dict.items():
-                if prop not in entity_dict or prop in {'first_paragraph', 'n_statements', 'n_sitelinks', 'pagerank', 'pagerank_wd', 'indeg', 'degree', 'outdeg'}:
+                if prop not in entity_dict or prop in {
+                    'first_paragraph', 'n_statements', 'n_sitelinks', 'pagerank',
+                    'pagerank_wd', 'indeg', 'degree', 'outdeg',
+                }:
                     continue
                 entity_values = entity_dict[prop]
                 if isinstance(entity_values, str):
@@ -317,5 +316,8 @@ class EntityEntitySimilarityScorer(KnowledgeGraphSemanticScorer):
                             score += entity_value == value
         return score
 
-    def matching_attributes(self, name, article):
-        return np.array([self._matching_attributes_single(qid, article['articleID']) for qid in name['ids']])
+    def eeiscore(self, name, article):
+        return np.array([
+            self._matching_attributes_single(qid, article['articleID'])
+            for qid in name['ids']
+        ])

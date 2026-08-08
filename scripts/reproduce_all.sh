@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Recompute paper tables from in-repo caches (no GPU, no Drive trees).
+# Recompute paper tables from in-repo caches (no GPU, no Wikidata dump).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -15,8 +15,8 @@ run python -c \
   "import nltk; [nltk.download(p, quiet=True) for p in
    ('punkt','punkt_tab','wordnet','omw-1.4','stopwords')]"
 
-echo "=== 1. Cache wiring ==="
-run python scripts/audit_faithfulness.py
+echo "=== 1. Assets ==="
+run python scripts/check_assets.py
 
 echo "=== 2. Heuristics + embeddings → artifacts/from_scratch ==="
 run python scripts/run_heuristics.py --dataset both --with-embeddings

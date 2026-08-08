@@ -10,6 +10,18 @@ bash scripts/reproduce_all.sh
 
 Needs [uv](https://docs.astral.sh/uv/) + Git LFS. No GPU. Writes `artifacts/all_paper_tables.json`.
 
+## What “reproduce” means here
+
+`reproduce_all.sh` **does not** rebuild entity KBs from a Wikidata dump. It:
+
+1. Recomputes popularity / IScore-family / CSE-family from shipped `caches/` (LFS)
+2. Merges **frozen** Eigen + mGENRE scores already in the repo
+3. Assembles Tables 1–11
+
+`artifacts/from_scratch/` means *recomputed from caches*, not *from Wikidata*.
+
+Scorers under `runlib/scoring/` keep the Drive research-tree APIs (`LQID`, `NP`, `NS`, `cse`, `ncse`, `eeiscore`, `cssve`).
+
 ## What the script recomputes (in-repo only)
 
 | Step | Source in repo |
@@ -21,6 +33,23 @@ Needs [uv](https://docs.astral.sh/uv/) + Git LFS. No GPU. Writes `artifacts/all_
 | Table 5 coarse buckets | `data/Quotebank/gt_annotation.json` |
 | Splits / types | `data/` |
 
+## Cache provenance (Drive research tree)
+
+When `~/gdrive-download` is present, `bash scripts/link_gdrive_assets.sh` verifies checksums and links `workspace/` for optional live Eigen/mGENRE. Clones still need `git lfs pull` — Drive is not a substitute for LFS.
+
+| Repo path | Drive source (`downloads/quotebank_el/`) | Notes |
+|---|---|---|
+| `caches/quotebank/entity_embeddings.pkl` | `embedding_wikicache_qb_cpu.pkl` | byte-identical |
+| `caches/quotebank/document_embeddings.pkl` | `embedding_contentcache_qb_cpu.pkl` | byte-identical |
+| `caches/quotebank/mention_embeddings.pkl` | `embedding_sentencecache_qb_cpu.pkl` | byte-identical |
+| `caches/quotebank/entity_kb_aliases.pkl` | `quotebank_cache_alias.pkl` | byte-identical |
+| `caches/quotebank/unambiguous_mentions.pkl` | `unambiguous_cache.pkl` | byte-identical |
+| `caches/quotebank/entity_kb.pkl` | (same QID set as alias cache) | candidate-filtered + centrality; not byte-identical |
+| `caches/aida/entity_kb.pkl` | enriched vs `aida_cache_new.pkl` | 29 865 QIDs with `n_sitelinks` / `n_statements` / PageRank |
+| `caches/aida/*_embeddings.pkl` | (in-repo only under these names) | required for CSE family |
+
+PageRank rank files used when building KBs live under Drive `pagerank_calclation/` (`wikidata.ranks`, etc.). The paper’s dump era appears in Drive utils as `wikidata-20211101-all.json.gz`.
+
 ## Cannot be reproduced exactly (documented)
 
 | Item | Why |
@@ -28,9 +57,10 @@ Needs [uv](https://docs.astral.sh/uv/) + Git LFS. No GPU. Writes `artifacts/all_
 | **Table 10** timings | Paper hardware (GTX TITAN X / Xeon E5-2680); reported as-is |
 | **Table 4** error *labels* | Manual qualitative categories; we only recompute the count (14) |
 | **Table 5** fine null split (151/37/24/22) | Full checked annotation MDs were never archived; null total (234) and gold/unambiguous are reconstructed (±2 vs paper) |
-| **Live Eigenthemes** | Needs the original DeepWalk tree (~2 GB, not in this repo). Use shipped Eigen pickles |
+| **Live Eigenthemes** | Needs the original DeepWalk tree (~2 GB). Use shipped Eigen pickles; tree under Drive `downloads2/.../eigenthemes` |
 | **Live mGENRE** | Optional GPU path (`setup_mgenre.sh`); tables use shipped beam dumps |
 | **AIDA CSSVE/UCSE exact floats** | Live rebuild from pooled BART caches drifts ~1 pp; tables use in-repo `score_cache/raw/AIDA/{cssve,ncse}_scores.pkl` for those two. CSE/NCSE still come from the live recompute |
+| **Full KB from public dumps** | Needs the 2021-11-01 Wikidata dump + PageRank assets; see `cache_building/README.md` |
 
 ## PDF typos (targets use corrected values)
 
@@ -45,8 +75,10 @@ Needs [uv](https://docs.astral.sh/uv/) + Git LFS. No GPU. Writes `artifacts/all_
 ## Optional re-runs
 
 ```bash
+# Wire local Drive trees (optional)
+bash scripts/link_gdrive_assets.sh
+
 # Live Eigenthemes (external research tree)
-ln -sfn /path/to/eigenthemes workspace/eigenthemes
 uv sync --extra eigenthemes
 uv run --extra eigenthemes python scripts/run_eigenthemes.py --dataset both
 

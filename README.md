@@ -17,9 +17,12 @@ bash scripts/reproduce_all.sh
 
 Recomputes heuristics from shipped `caches/`, merges in-repo Eigen/mGENRE
 scores, rebuilds Tables 1–11 → `artifacts/all_paper_tables.json`. No GPU.
+This is **not** a Wikidata-dump rebuild — see
+**[REPRODUCIBILITY.md](REPRODUCIBILITY.md)** for provenance, PDF typos, and
+what cannot be rebuilt.
 
-Details, known PDF typos, and the few items that cannot be rebuilt:
-**[REPRODUCIBILITY.md](REPRODUCIBILITY.md)**.
+Scorers keep the original research-tree method names (`LQID`, `NS`, `cse`,
+`eeiscore`, …) from the Drive code under `~/gdrive-download` when available.
 
 ## Use on your own data
 

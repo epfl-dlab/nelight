@@ -55,15 +55,15 @@ def resolve_eigen_dir() -> Path:
 EIGEN_DIR = resolve_eigen_dir()
 EMB = EIGEN_DIR / "embeddings" / "deepwalk_wikidata.pickle"
 
-_ns: dict = {}
-exec(
-    open(ROOT / "scripts/reproduce_tables.py")
-    .read()
-    .split("def main")[0]
-    .replace("ROOT = Path(__file__).resolve().parents[1]", f"ROOT = Path(r'{ROOT}')"),
-    _ns,
+from runlib.eval import (  # noqa: E402
+    assign_unambiguous,
+    flatten_gt,
+    load_json,
+    normalize_scores,
+    precision_at_one_aida,
+    precision_at_one_qb,
+    same_score_rank_ensemble,
 )
-globals().update({k: v for k, v in _ns.items() if callable(v) or k.isupper()})
 
 
 def strip_idx(name: str) -> str:

@@ -8,7 +8,6 @@ Unique entity strings are lemmatized once (pywsd is expensive).
 from __future__ import annotations
 
 import argparse
-import importlib.util
 import json
 import pickle
 import re
@@ -26,20 +25,15 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from runlib.cache_paths import resolve as resolve_cache  # noqa: E402
-from runlib.scoring.centrality import WikidataCentralityScorer  # noqa: E402
-
-_spec = importlib.util.spec_from_file_location(
-    "_nelight_reproduce_tables", ROOT / "scripts/reproduce_tables.py"
+from runlib.eval import (  # noqa: E402
+    flatten_gt,
+    load_json,
+    mrr_qb,
+    normalize_scores,
+    precision_at_one_qb,
+    same_score_rank_ensemble,
 )
-_rt = importlib.util.module_from_spec(_spec)
-assert _spec.loader is not None
-_spec.loader.exec_module(_rt)
-load_json = _rt.load_json
-normalize_scores = _rt.normalize_scores
-same_score_rank_ensemble = _rt.same_score_rank_ensemble
-precision_at_one_qb = _rt.precision_at_one_qb
-mrr_qb = _rt.mrr_qb
-flatten_gt = _rt.flatten_gt
+from runlib.scoring.centrality import WikidataCentralityScorer  # noqa: E402
 
 FEATURES = [
     "D", "P", "S", "S_A", "D + P", "D + S", "D + S_A",
@@ -240,7 +234,7 @@ def run_ablation(out_dir: Path) -> dict:
 
     print("[ablation] NS tie-break...", flush=True)
     ns = normalize_scores(
-        WikidataCentralityScorer("n_sitelinks", wiki_cache=wiki).score_all(data)
+        WikidataCentralityScorer("NS", wiki_cache=wiki).score_all(data)
     )
     candidate_qids = {
         qid

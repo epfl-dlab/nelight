@@ -1,41 +1,4 @@
 {
-  "rows": [
-    {
-      "category": "Unambiguous",
-      "mentions": 1320,
-      "pct": 70.7
-    },
-    {
-      "category": "Ambiguous / Gold entity exists",
-      "mentions": 312,
-      "pct": 16.7
-    },
-    {
-      "category": "Ambiguous / No correct QID in Wikidata",
-      "mentions": 151,
-      "pct": 8.1
-    },
-    {
-      "category": "Ambiguous / Impossible",
-      "mentions": 37,
-      "pct": 2.0
-    },
-    {
-      "category": "Ambiguous / Correct QID not listed",
-      "mentions": 24,
-      "pct": 1.3
-    },
-    {
-      "category": "Ambiguous / Not a person",
-      "mentions": 22,
-      "pct": 1.2
-    },
-    {
-      "category": "Total",
-      "mentions": 1866,
-      "pct": 100.0
-    }
-  ],
   "paper": [
     {
       "category": "Unambiguous",
@@ -80,6 +43,43 @@
     "null_gold": 234,
     "ambiguous_annotated": 546
   },
+  "rows": [
+    {
+      "category": "Unambiguous",
+      "mentions": 1320,
+      "pct": 70.7
+    },
+    {
+      "category": "Ambiguous / Gold entity exists",
+      "mentions": 312,
+      "pct": 16.7
+    },
+    {
+      "category": "Ambiguous / No correct QID in Wikidata",
+      "mentions": 151,
+      "pct": 8.1
+    },
+    {
+      "category": "Ambiguous / Impossible",
+      "mentions": 37,
+      "pct": 2.0
+    },
+    {
+      "category": "Ambiguous / Correct QID not listed",
+      "mentions": 24,
+      "pct": 1.3
+    },
+    {
+      "category": "Ambiguous / Not a person",
+      "mentions": 22,
+      "pct": 1.2
+    },
+    {
+      "category": "Total",
+      "mentions": 1866,
+      "pct": 100.0
+    }
+  ],
   "deltas_vs_paper": {
     "Unambiguous": -2,
     "Ambiguous / Gold entity exists": 2,
@@ -89,9 +89,9 @@
     "Ambiguous / Not a person": 0,
     "Total": 0
   },
-  "match": true,
   "notes": [
     "Coarse buckets from data/Quotebank/gt_annotation.json.",
     "Fine null split is paper-reported (annotation MDs not archived)."
-  ]
+  ],
+  "match": true
 }

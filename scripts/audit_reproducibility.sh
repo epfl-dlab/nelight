@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Full from-scratch table rebuild + match check.
+# Full table rebuild + match check.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 bash scripts/reproduce_all.sh

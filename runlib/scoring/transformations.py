@@ -11,22 +11,12 @@ def transform_scores(scores, transformation):
     return transformed_scores
 
 
-def log_transformation(scores):
-    return np.log(scores)
-
-
 def laplacian_smoothing_transformation(scores):
     return prob_transformation(scores + 1)
 
-def multiply(scores, value):
-    return scores * value
 
 def prob_transformation(scores):
     return scores / np.sum(scores)
-
-
-def add(scores, value):
-    return scores + value
 
 
 def clip(scores, value):

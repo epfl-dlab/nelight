@@ -2,7 +2,9 @@
 
 The Wikidata dump used in the paper is not in this repo. Use these scripts to
 rebuild entity databases (and optional text embeddings) for Quotebank, AIDA, or
-your own data.
+your own data. A rebuilt KB will **not** bit-match paper numbers unless you use
+the same dump era and PageRank assets (paper tooling references
+`wikidata-20211101-all.json.gz`).
 
 ## Steps
 
@@ -30,8 +32,6 @@ DUMP=… DATA_QB=/path/to/data.json DATA_AIDA=/path/to/data.json OUT=artifacts/m
   bash cache_building/run_pipeline.sh
 ```
 
-Step-by-step `uv run` commands: see the README quickstart.
-
 ## Optional inputs
 
 ```bash
@@ -41,6 +41,8 @@ export QID_PID=/path/to/qid_pid_mapping.json.bz2
 export FIRST_PARAGRAPHS=/path/to/first_paragraphs.jsonl.bz2
 ```
 
-PageRank download links and file format: **REPRODUCIBILITY.md**.
+If you have the research Drive tree locally, PageRank assets are under
+`~/gdrive-download/downloads/quotebank_el/pagerank_calclation/` (e.g.
+`wikidata.ranks`). Wire optional trees with `bash scripts/link_gdrive_assets.sh`.
 
 Text embeddings need `uv sync --extra from-scratch` and (preferably) a GPU.

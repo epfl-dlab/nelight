@@ -633,7 +633,7 @@
       }
     ],
     "notes": [
-      "Categories (Similar domain / Key property \u2026) are manual labels from Appendix H; count of UIScore mistakes on the 245-mention eval set is reproducible and matches Table 4 total (14)."
+      "Categories are manual labels from Appendix H; error count (14) is reproducible."
     ],
     "match": true
   },
@@ -1145,7 +1145,7 @@
     ],
     "match": true,
     "notes": [
-      "P@1 matches paper. AIDA MRR in the printed table is ~0.008 lower than the genre_context dumps / FS conversions (dump-faithful values reported)."
+      "P@1 matches paper. AIDA MRR in the printed table is ~0.008 lower than dumps."
     ]
   },
   "table9": {
@@ -1296,7 +1296,7 @@
     "local": null,
     "match": true,
     "notes": [
-      "Table 10 is hardware-specific (GTX TITAN X / Xeon E5-2680). Paper numbers are reported as-is; the reproducible claim is the relative order NS << heuristics << mGENRE."
+      "Table 10 is hardware-specific (GTX TITAN X / Xeon E5-2680); reported as-is."
     ]
   },
   "table11": {
@@ -1679,9 +1679,9 @@
     },
     "match": true,
     "notes": [
-      "Values are dump/FS-faithful MRR (same scores as Table 2 P@1).",
+      "Dump/recompute-faithful MRR (same scores as Table 2 P@1).",
       "Printed AIDA CSE/EEIScore/CSSVE/UCSE/NIScore MRR rows are scrambled.",
-      "Printed AIDA mGENRE hard/overall MRR (0.720/0.730) are below dumps (0.743/0.736); Table 8 printed AIDA MRR has the same undercount."
+      "Printed AIDA mGENRE hard/overall MRR (0.720/0.730) are below dumps (0.743/0.736)."
     ]
   },
   "summary": {
