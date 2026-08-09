@@ -16,8 +16,8 @@ bash scripts/reproduce_all.sh
 ```
 
 Recomputes heuristics from shipped `caches/`, merges in-repo Eigen/mGENRE
-scores, rebuilds Tables 1–11 → `artifacts/all_paper_tables.json`. No GPU.
-This is **not** a Wikidata-dump rebuild — see
+scores, rebuilds Tables 1–11 → `artifacts/all_paper_tables.json`. No GPU required.
+This is **not** a Wikidata-dump rebuild. See
 **[REPRODUCIBILITY.md](REPRODUCIBILITY.md)** for provenance, PDF typos, and
 what cannot be rebuilt.
 
@@ -46,7 +46,7 @@ Scorers use the paper method names (`LQID`, `NS`, `cse`, `eeiscore`, …).
 `offsets` should be word spans. The scripts assume that document content consists of whitespace-joined tokens. This is an artifact of ensuring compatibility with Quotebank's article metadata format.  
 
 **2. Build an entity KB** from a
-[Wikidata dump](https://dumps.wikimedia.org/wikidatawiki/entities/) — see
+[Wikidata dump](https://dumps.wikimedia.org/wikidatawiki/entities/). See
 `cache_building/README.md`, or:
 
 ```bash
