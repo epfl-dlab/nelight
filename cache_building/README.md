@@ -41,8 +41,7 @@ export QID_PID=/path/to/qid_pid_mapping.json.bz2
 export FIRST_PARAGRAPHS=/path/to/first_paragraphs.jsonl.bz2
 ```
 
-If you have the research Drive tree locally, PageRank assets are under
-`~/gdrive-download/downloads/quotebank_el/pagerank_calclation/` (e.g.
-`wikidata.ranks`). Wire optional trees with `bash scripts/link_gdrive_assets.sh`.
+PageRank files are plain text maps from entity id to rank (one score per
+line / id). Provide them via `WP_RANKS` / `WD_RANKS` if you want PRWP / PRWD.
 
 Text embeddings need `uv sync --extra from-scratch` and (preferably) a GPU.

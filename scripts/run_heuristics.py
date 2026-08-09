@@ -123,7 +123,7 @@ def run_dataset(
     print(f"[{dataset}] articles={len(data)} entity_kb={len(wiki_cache)} protocol={protocol}", flush=True)
     unamb = load_unambiguous_cache(dataset, data, path=unambiguous_path)
 
-    # Drive method names on WikidataCentralityScorer
+    # Paper method names on WikidataCentralityScorer
     methods_raw = {}
     for key in ("LQID", "NP", "NS", "PRWP", "PRWD"):
         print(f"[{dataset}] scoring {key}...", flush=True)

@@ -1,4 +1,4 @@
-"""Entity/content scorers — Drive originals with packaging + numpy cosine helpers."""
+"""Entity/content scorers (paper method names; numpy cosine helpers)."""
 
 import re
 
@@ -12,7 +12,7 @@ from runlib.scoring import Scorer
 from runlib.scoring._emb import cosine, mean_vec, stack_mean
 from runlib.utils.processing import sentences_with_name
 
-# Kept for parity with the research tree (unused here).
+# Unused; kept for API parity with the original scorer module.
 special_characters = {
     '.', ',', ')', '(', '/', '\\', '<', '>', '+', '-', '!', '?', '@', '"', '#',
     '$', '%', '&', '=', '[', ']', '{', '}', "'", '~', '*', '_', ':',

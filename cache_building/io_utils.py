@@ -1,4 +1,4 @@
-"""Shared I/O helpers for cache construction (from quotebank_el/helpers.py)."""
+"""Shared I/O helpers for cache construction."""
 
 from __future__ import annotations
 

@@ -21,8 +21,7 @@ This is **not** a Wikidata-dump rebuild — see
 **[REPRODUCIBILITY.md](REPRODUCIBILITY.md)** for provenance, PDF typos, and
 what cannot be rebuilt.
 
-Scorers keep the original research-tree method names (`LQID`, `NS`, `cse`,
-`eeiscore`, …) from the Drive code under `~/gdrive-download` when available.
+Scorers use the paper method names (`LQID`, `NS`, `cse`, `eeiscore`, …).
 
 ## Use on your own data
 

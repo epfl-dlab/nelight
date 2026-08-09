@@ -24,26 +24,17 @@ OUT = ROOT / "artifacts" / "from_scratch"
 
 
 def resolve_eigen_dir() -> Path:
-    """Find the Eigenthemes research tree.
+    """Find an Eigenthemes tree with DeepWalk embeddings.
 
     Search order:
       1. ``$NELIGHT_EIGENTHEMES``
       2. ``workspace/eigenthemes`` (symlink or checkout)
-      3. sibling Drive trees under ``~/gdrive-download/...``
     """
-    env = os.environ.get("NELIGHT_EIGENTHEMES")
     candidates = []
+    env = os.environ.get("NELIGHT_EIGENTHEMES")
     if env:
         candidates.append(Path(env))
     candidates.append(ROOT / "workspace" / "eigenthemes")
-    home = Path.home()
-    candidates.extend(
-        [
-            home
-            / "gdrive-download/downloads2/speaker-disambiguation-quotebank/eigenthemes",
-            home / "gdrive-download/downloads/quotebank_el/eigenthemes",
-        ]
-    )
     for cand in candidates:
         if (cand / "unsupervised_el.py").is_file() and (
             cand / "embeddings" / "deepwalk_wikidata.pickle"
@@ -276,11 +267,10 @@ def main():
             "Expected DeepWalk embeddings + unsupervised_el.py under one of:\n"
             "  $NELIGHT_EIGENTHEMES\n"
             "  workspace/eigenthemes\n"
-            "  ~/gdrive-download/downloads2/speaker-disambiguation-quotebank/eigenthemes\n"
-            "Symlink example:\n"
-            "  ln -sfn /path/to/speaker-disambiguation-quotebank/eigenthemes "
-            "workspace/eigenthemes\n"
-            "See REPRODUCIBILITY.md § Eigenthemes."
+            "Example:\n"
+            "  export NELIGHT_EIGENTHEMES=/path/to/eigenthemes\n"
+            "  # or: ln -sfn /path/to/eigenthemes workspace/eigenthemes\n"
+            "See REPRODUCIBILITY.md (Live Eigenthemes)."
         )
     print(f"Using Eigenthemes tree: {EIGEN_DIR}", flush=True)
 
@@ -294,7 +284,7 @@ def main():
         if not base_json.exists():
             raise SystemExit(
                 f"Missing {base_json}. Eigenthemes candidate JSON lists are not "
-                "shipped in this repo; copy them from the original research tree."
+                "shipped in this repo; place them under the Eigenthemes data/ dir."
             )
         eigen_base = json.load(open(base_json))
         ds_out = OUT / dataset
@@ -318,7 +308,7 @@ def main():
             else:
                 # Paper Eigen(IScore) inputs (int(IScore) prominence). Rebuilding from
                 # current FS IScore does not reproduce historical integer weights;
-                # use the shipped candidate JSONs under workspace/eigenthemes.
+                # use the candidate JSONs under the Eigenthemes data/ dir.
                 hist_name = (
                     "quotebank_iscore_test_complete.json"
                     if dataset == "quotebank"
@@ -326,17 +316,8 @@ def main():
                 )
                 json_path = EIGEN_DIR / "data" / hist_name
                 if not json_path.exists():
-                    alt = ROOT / "workspace" / "quotebank_el" / hist_name
-                    src = alt
-                    if src.exists():
-                        json_path.parent.mkdir(parents=True, exist_ok=True)
-                        if not json_path.exists():
-                            import shutil
-
-                            shutil.copy(src, json_path)
-                    else:
-                        print(f"missing {hist_name}; cannot run Eigen(IScore)")
-                        continue
+                    print(f"missing {hist_name}; cannot run Eigen(IScore)")
+                    continue
                 raw = run_weigen(json_path, hist_name)
                 save_pk(raw, OUT / f"eigen_raw_{hist_name}.pkl")
                 if dataset == "aida":

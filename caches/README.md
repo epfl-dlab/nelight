@@ -11,5 +11,5 @@ Large files under `caches/{quotebank,aida}/` (stored with Git LFS).
 | `document_embeddings.pkl` | CSE |
 | `mention_embeddings.pkl` | NCSE |
 
-Provenance vs the Drive research tree: **[REPRODUCIBILITY.md](../REPRODUCIBILITY.md)**.
+What is recomputed vs shipped: **[REPRODUCIBILITY.md](../REPRODUCIBILITY.md)**.
 Rebuild from a Wikidata dump: `cache_building/README.md`.

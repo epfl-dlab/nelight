@@ -20,7 +20,7 @@ Needs [uv](https://docs.astral.sh/uv/) + Git LFS. No GPU. Writes `artifacts/all_
 
 `artifacts/from_scratch/` means *recomputed from caches*, not *from Wikidata*.
 
-Scorers under `runlib/scoring/` keep the Drive research-tree APIs (`LQID`, `NP`, `NS`, `cse`, `ncse`, `eeiscore`, `cssve`).
+Scorers under `runlib/scoring/` use the paper method names (`LQID`, `NP`, `NS`, `cse`, `ncse`, `eeiscore`, `cssve`).
 
 ## What the script recomputes (in-repo only)
 
@@ -33,22 +33,19 @@ Scorers under `runlib/scoring/` keep the Drive research-tree APIs (`LQID`, `NP`,
 | Table 5 coarse buckets | `data/Quotebank/gt_annotation.json` |
 | Splits / types | `data/` |
 
-## Cache provenance (Drive research tree)
+## Shipped caches
 
-When `~/gdrive-download` is present, `bash scripts/link_gdrive_assets.sh` verifies checksums and links `workspace/` for optional live Eigen/mGENRE. Clones still need `git lfs pull` — Drive is not a substitute for LFS.
+| Path | Role |
+|---|---|
+| `caches/quotebank/entity_kb.pkl` | Popularity + text-overlap heuristics |
+| `caches/quotebank/entity_kb_aliases.pkl` | Table 6 alias ablation |
+| `caches/quotebank/unambiguous_mentions.pkl` | EEIScore / CSSVE |
+| `caches/quotebank/{entity,document,mention}_embeddings.pkl` | CSE family |
+| `caches/aida/entity_kb.pkl` | AIDA popularity + text-overlap (with centrality fields) |
+| `caches/aida/unambiguous_mentions.pkl` | EEIScore / CSSVE |
+| `caches/aida/{entity,document,mention}_embeddings.pkl` | CSE family |
 
-| Repo path | Drive source (`downloads/quotebank_el/`) | Notes |
-|---|---|---|
-| `caches/quotebank/entity_embeddings.pkl` | `embedding_wikicache_qb_cpu.pkl` | byte-identical |
-| `caches/quotebank/document_embeddings.pkl` | `embedding_contentcache_qb_cpu.pkl` | byte-identical |
-| `caches/quotebank/mention_embeddings.pkl` | `embedding_sentencecache_qb_cpu.pkl` | byte-identical |
-| `caches/quotebank/entity_kb_aliases.pkl` | `quotebank_cache_alias.pkl` | byte-identical |
-| `caches/quotebank/unambiguous_mentions.pkl` | `unambiguous_cache.pkl` | byte-identical |
-| `caches/quotebank/entity_kb.pkl` | (same QID set as alias cache) | candidate-filtered + centrality; not byte-identical |
-| `caches/aida/entity_kb.pkl` | enriched vs `aida_cache_new.pkl` | 29 865 QIDs with `n_sitelinks` / `n_statements` / PageRank |
-| `caches/aida/*_embeddings.pkl` | (in-repo only under these names) | required for CSE family |
-
-PageRank rank files used when building KBs live under Drive `pagerank_calclation/` (`wikidata.ranks`, etc.). The paper’s dump era appears in Drive utils as `wikidata-20211101-all.json.gz`.
+Rebuild from a Wikidata dump: `cache_building/README.md` (paper tooling used the 2021-11-01 dump era).
 
 ## Cannot be reproduced exactly (documented)
 
@@ -57,10 +54,10 @@ PageRank rank files used when building KBs live under Drive `pagerank_calclation
 | **Table 10** timings | Paper hardware (GTX TITAN X / Xeon E5-2680); reported as-is |
 | **Table 4** error *labels* | Manual qualitative categories; we only recompute the count (14) |
 | **Table 5** fine null split (151/37/24/22) | Full checked annotation MDs were never archived; null total (234) and gold/unambiguous are reconstructed (±2 vs paper) |
-| **Live Eigenthemes** | Needs the original DeepWalk tree (~2 GB). Use shipped Eigen pickles; tree under Drive `downloads2/.../eigenthemes` |
+| **Live Eigenthemes** | Needs an external DeepWalk tree (~2 GB). Tables use shipped Eigen pickles; for a live re-run set `$NELIGHT_EIGENTHEMES` or `workspace/eigenthemes` |
 | **Live mGENRE** | Optional GPU path (`setup_mgenre.sh`); tables use shipped beam dumps |
 | **AIDA CSSVE/UCSE exact floats** | Live rebuild from pooled BART caches drifts ~1 pp; tables use in-repo `score_cache/raw/AIDA/{cssve,ncse}_scores.pkl` for those two. CSE/NCSE still come from the live recompute |
-| **Full KB from public dumps** | Needs the 2021-11-01 Wikidata dump + PageRank assets; see `cache_building/README.md` |
+| **Full KB from public dumps** | Needs a matching Wikidata dump + PageRank rank files; see `cache_building/README.md` |
 
 ## PDF typos (targets use corrected values)
 
@@ -75,10 +72,9 @@ PageRank rank files used when building KBs live under Drive `pagerank_calclation
 ## Optional re-runs
 
 ```bash
-# Wire local Drive trees (optional)
-bash scripts/link_gdrive_assets.sh
-
-# Live Eigenthemes (external research tree)
+# Live Eigenthemes (external DeepWalk tree)
+#   export NELIGHT_EIGENTHEMES=/path/to/eigenthemes
+#   # or: ln -sfn /path/to/eigenthemes workspace/eigenthemes
 uv sync --extra eigenthemes
 uv run --extra eigenthemes python scripts/run_eigenthemes.py --dataset both
 

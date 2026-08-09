@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
 """Extract a candidate-QID subgraph from a full Wikidata JSON dump.
 
-Historical sources:
-  - quotebank_el/extract_quotebank_subset.py
-  - utils/extract_quotebank_subset.py
-
 Usage:
   python cache_building/extract_wikidata_subgraph.py \\
       --dump /path/to/wikidata-20211101-all.json.gz \\
