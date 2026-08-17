@@ -1,8 +1,3 @@
-"""Canonical cache paths for NELight reproduction.
-
-Caches live under ``caches/{quotebank,aida}/``.
-"""
-
 from __future__ import annotations
 
 from pathlib import Path
@@ -30,7 +25,6 @@ CANONICAL = {
 
 
 def resolve(dataset: str, kind: str, *, required: bool = True) -> Path | None:
-    """Return the canonical path for a cache if it exists."""
     ds = "quotebank" if dataset.lower() in {"quotebank", "qb"} else "aida"
     if kind not in CANONICAL[ds]:
         if required:
@@ -42,8 +36,3 @@ def resolve(dataset: str, kind: str, *, required: bool = True) -> Path | None:
     if required:
         raise FileNotFoundError(f"Missing cache {ds}/{kind} at {p}")
     return None
-
-
-def ensure_canonical_symlinks() -> list[str]:
-    """No-op kept for call-site compatibility (canonical files are real paths)."""
-    return []

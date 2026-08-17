@@ -47,27 +47,37 @@ Scorers under `runlib/scoring/` use the paper method names (`LQID`, `NP`, `NS`, 
 
 Rebuild from a Wikidata dump: `cache_building/README.md` (paper tooling used the 2021-11-01 dump era).
 
-## Cannot be reproduced exactly (documented)
+## PDF typos (targets use corrected values)
+
+| Printed | Correct |
+|---|---|
+| QB NIScore overall 0.851 | **0.898** (`(0.966×203 + 0.571×42)/245`) |
+| AIDA NIScore overall 0.562 | **0.589** |
+| AIDA Eigen easy 0.859 | **0.858** (overall exact) |
+| Table 9 UIScore+PRWP 0.942 | **0.943** (same as Table 2 overall) |
+| Several Table 11 AIDA MRR rows | Same ranking as Table 2; PDF scrambled (printed EEIScore MRR < P@1) |
+| Table 8/11 AIDA mGENRE MRR 0.720/0.730 | **0.743/0.736** (beam dumps) |
+
+Machine-readable copy: `paper/tables/paper_tables.json` → `pdf_typos`.
+
+## Paper vs. code (published numbers follow the code)
+
+| Item | Paper text | Implementation that matches the tables |
+|---|---|---|
+| **EEIScore / CSSVE anchors** | Eq. 2–3 union statements of *all* unambiguous mentions \(U_a\) | Original scorer used only the **first** unambiguous mention (`cache[aid][0]`) |
+| **QB UCSE / NCSE scale** | §4.4 maps CSE and NCSE with \(f(x)=\tfrac12(x+1)\) | Published QB UCSE uses additive smoothing \((x+1)/\sum(x+1)\) on NCSE (AIDA UCSE uses the affine map) |
+
+## Cannot be reproduced exactly
 
 | Item | Why |
 |---|---|
 | **Table 10** timings | Paper hardware (GTX TITAN X / Xeon E5-2680); reported as-is |
 | **Table 4** error *labels* | Manual qualitative categories; we only recompute the count (14) |
 | **Table 5** fine null split (151/37/24/22) | Full checked annotation MDs were never archived; null total (234) and gold/unambiguous are reconstructed (±2 vs paper) |
-| **Live Eigenthemes** | Needs an external DeepWalk tree (~2 GB). Tables use shipped Eigen pickles; for a live re-run set `$NELIGHT_EIGENTHEMES` or `workspace/eigenthemes` |
+| **Live Eigenthemes** | Needs an external DeepWalk tree (~2 GB). Tables use shipped Eigen pickles; for a live re-run set `$NELIGHT_EIGENTHEMES` or `workspace/eigenthemes` |
 | **Live mGENRE** | Optional GPU path (`setup_mgenre.sh`); tables use shipped beam dumps |
-| **AIDA CSSVE/UCSE exact floats** | Live rebuild from pooled BART caches drifts ~1 pp; tables use in-repo `score_cache/raw/AIDA/{cssve,ncse}_scores.pkl` for those two. CSE/NCSE still come from the live recompute |
+| **AIDA CSSVE/UCSE exact floats** | Live rebuild from pooled BART caches drifts ~1 pp; tables use in-repo `score_cache/raw/AIDA/{cssve,ncse}_scores.pkl` for those two. CSE/NCSE still come from the live recompute |
 | **Full KB from public dumps** | Needs a matching Wikidata dump + PageRank rank files; see `cache_building/README.md` |
-
-## PDF typos (targets use corrected values)
-
-| Printed | Correct |
-|---|---|
-| QB NIScore overall 0.851 | **0.898** |
-| AIDA NIScore overall 0.562 | **0.589** |
-| AIDA Eigen easy 0.859 | **0.858** (overall exact) |
-| Several Table 11 AIDA MRR rows | Same scores as Table 2; PDF scrambled |
-| Table 8/11 AIDA mGENRE MRR 0.720/0.730 | **0.743/0.736** |
 
 ## Optional re-runs
 

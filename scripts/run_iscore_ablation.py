@@ -22,10 +22,9 @@ from pywsd.utils import lemmatize_sentence
 from tqdm import tqdm
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT))
 
-from runlib.cache_paths import resolve as resolve_cache  # noqa: E402
-from runlib.eval import (  # noqa: E402
+from runlib.cache_paths import resolve as resolve_cache
+from runlib.eval import (
     flatten_gt,
     load_json,
     mrr_qb,
@@ -33,7 +32,7 @@ from runlib.eval import (  # noqa: E402
     precision_at_one_qb,
     same_score_rank_ensemble,
 )
-from runlib.scoring.centrality import WikidataCentralityScorer  # noqa: E402
+from runlib.scoring.centrality import WikidataCentralityScorer
 
 FEATURES = [
     "D", "P", "S", "S_A", "D + P", "D + S", "D + S_A",

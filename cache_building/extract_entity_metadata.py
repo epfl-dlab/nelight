@@ -1,17 +1,7 @@
 #!/usr/bin/env python3
 """Extract English labels, aliases, and descriptions from a Wikidata dump.
 
-Historical sources:
-  - utils/aida_aliases.py, utils/aida_wikicache.py
-
-Writes ``wikidata_{labels,aliases,descriptions}.pkl`` keyed by integer QID
-(without the ``Q`` prefix), matching ``representation.py``.
-
-Usage:
-  python cache_building/extract_entity_metadata.py \\
-      --dump /path/to/wikidata-20211101-all.json.gz \\
-      --qids artifacts/cache_build/candidate_qids.pkl \\
-      --out-dir artifacts/cache_build/entity_metadata
+Writes ``wikidata_{labels,aliases,descriptions}.pkl`` keyed by integer QID.
 """
 
 from __future__ import annotations

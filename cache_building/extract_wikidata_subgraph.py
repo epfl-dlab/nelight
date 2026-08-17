@@ -1,12 +1,5 @@
 #!/usr/bin/env python3
-"""Extract a candidate-QID subgraph from a full Wikidata JSON dump.
-
-Usage:
-  python cache_building/extract_wikidata_subgraph.py \\
-      --dump /path/to/wikidata-20211101-all.json.gz \\
-      --qids artifacts/cache_build/candidate_qids.pkl \\
-      --out artifacts/cache_build/wikidata_subgraph.json.gz
-"""
+"""Extract a candidate-QID subgraph from a full Wikidata JSON dump."""
 
 from __future__ import annotations
 

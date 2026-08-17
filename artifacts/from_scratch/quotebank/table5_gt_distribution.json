@@ -36,13 +36,6 @@
       "pct": 100.0
     }
   ],
-  "reconstructed": {
-    "total": 1866,
-    "unambiguous": 1320,
-    "gold_entity_exists": 312,
-    "null_gold": 234,
-    "ambiguous_annotated": 546
-  },
   "rows": [
     {
       "category": "Unambiguous",
@@ -80,6 +73,13 @@
       "pct": 100.0
     }
   ],
+  "match": true,
+  "reconstructed": {
+    "total": 1866,
+    "unambiguous": 1320,
+    "gold_entity_exists": 312,
+    "null_gold": 234
+  },
   "deltas_vs_paper": {
     "Unambiguous": -2,
     "Ambiguous / Gold entity exists": 2,
@@ -91,7 +91,6 @@
   },
   "notes": [
     "Coarse buckets from data/Quotebank/gt_annotation.json.",
-    "Fine null split is paper-reported (annotation MDs not archived)."
-  ],
-  "match": true
+    "Fine null split is paper-reported (annotation MDs were never archived)."
+  ]
 }

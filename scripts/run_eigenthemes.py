@@ -9,7 +9,6 @@ evaluates Table-2 P@1 (Quotebank: NS→LQID TB; AIDA: no popularity TB).
 from __future__ import annotations
 
 import argparse
-import copy
 import json
 import os
 import pickle
@@ -70,47 +69,6 @@ def save_pk(obj, path: Path):
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "wb") as f:
         pickle.dump(obj, f)
-
-
-def reweight_eigen_json(eigen_data: dict, score_dict: dict, dataset: str) -> dict:
-    """Replace candidate prominence weights with NELight scores (NS / IScore)."""
-    data = load_json(ROOT / f"data/{'Quotebank' if dataset == 'quotebank' else 'AIDA'}/data.json")
-    # Ordered NELight mentions per (aid, surface): list of (nelight_name, ids)
-    idmap: dict[tuple, list] = {}
-    for article in data:
-        aid = article["articleID"]
-        for name in article["names"]:
-            surf = strip_idx(name["name"].lower()) if dataset == "aida" else name["name"].lower()
-            idmap.setdefault((aid, surf), []).append((name["name"].lower(), name["ids"]))
-
-    out = copy.deepcopy(eigen_data)
-    occ_e: dict[tuple, int] = {}
-    for aid, items in out.items():
-        for item in items:
-            ment = item["mention"].lower()
-            key = (aid, ment)
-            idx = occ_e.get(key, 0)
-            occ_e[key] = idx + 1
-            lst = idmap.get(key, [])
-            if idx >= len(lst):
-                continue
-            nl_name, ids = lst[idx]
-            sc = None
-            if aid in score_dict:
-                for k, v in score_dict[aid].items():
-                    if k.lower() == nl_name:
-                        sc = np.asarray(v, dtype=float)
-                        break
-            if sc is None or len(sc) != len(ids):
-                continue
-            q2s = {q: float(s) for q, s in zip(ids, sc)}
-            new_cands = []
-            for c in item["candidates"]:
-                qid = c[0]
-                new_cands.append([qid, q2s.get(qid, 0.0), c[2] if len(c) > 2 else ment])
-            new_cands.sort(key=lambda x: (x[1], int(str(x[0])[1:])), reverse=True)
-            item["candidates"] = new_cands
-    return out
 
 
 def _patch_legacy_deps():
@@ -183,7 +141,9 @@ def run_weigen(eigen_json_path: Path, tag: str):
         os.chdir(os_chdir)
 
 
-def convert_to_nelight(raw: dict, dataset: str) -> dict:
+def convert_to_nelight(raw: dict, dataset: str, strip_surface: bool | None = None) -> dict:
+    if strip_surface is None:
+        strip_surface = dataset == "aida"
     data = load_json(ROOT / f"data/{'Quotebank' if dataset == 'quotebank' else 'AIDA'}/data.json")
     m2q = raw["mention2QueryId"]
     q2m = {}
@@ -216,7 +176,7 @@ def convert_to_nelight(raw: dict, dataset: str) -> dict:
             n = name["name"]
             nl = n.lower()
             ids = name["ids"]
-            surface = strip_idx(nl) if dataset == "aida" else nl
+            surface = strip_idx(nl) if strip_surface else nl
             idx = occ.get(surface, 0)
             occ[surface] = idx + 1
             lst = by_surf.get((aid, surface), [])
@@ -286,7 +246,6 @@ def main():
                 f"Missing {base_json}. Eigenthemes candidate JSON lists are not "
                 "shipped in this repo; place them under the Eigenthemes data/ dir."
             )
-        eigen_base = json.load(open(base_json))
         ds_out = OUT / dataset
         ds_out.mkdir(parents=True, exist_ok=True)
 
@@ -320,44 +279,8 @@ def main():
                     continue
                 raw = run_weigen(json_path, hist_name)
                 save_pk(raw, OUT / f"eigen_raw_{hist_name}.pkl")
-                if dataset == "aida":
-                    # Mentions already use japan0-style names matching NELight.
-                    data = load_json(ROOT / "data/AIDA/data.json")
-                    m2q = raw["mention2QueryId"]
-                    q2m = {}
-                    for key, val in m2q.items():
-                        try:
-                            qid = val[0] if len(val) == 2 else val
-                        except TypeError:
-                            qid = val
-                        if qid != -1:
-                            q2m[int(qid)] = key
-                    per = {}
-                    for key_s, cand, score in zip(
-                        raw["key"], raw["cand_names"], raw["weigen"]
-                    ):
-                        qid = int(key_s.split(":")[-1])
-                        if qid in q2m:
-                            per.setdefault(q2m[qid], {})[cand] = float(score)
-                    scores = {}
-                    for article in data:
-                        aid = article["articleID"]
-                        scores[aid] = {}
-                        for name in article["names"]:
-                            nl = name["name"].lower()
-                            ids = name["ids"]
-                            sc = None
-                            for mkey, s in per.items():
-                                if mkey[0] == aid and mkey[1].lower() == nl:
-                                    sc = s
-                                    break
-                            scores[aid][nl] = (
-                                np.zeros(len(ids), dtype=float)
-                                if sc is None
-                                else np.array([sc.get(q, 0.0) for q in ids], dtype=float)
-                            )
-                else:
-                    scores = convert_to_nelight(raw, dataset)
+                # AIDA IScore JSONs already use japan0-style names; don't strip the index.
+                scores = convert_to_nelight(raw, dataset, strip_surface=False)
                 # Notebook fill: missing/zero eigen → NS
                 pop = load_pk(ROOT / "scores/popularity_scores.pkl")
                 ns = normalize_scores(pop["qb" if dataset == "quotebank" else "aida"]["ns"])

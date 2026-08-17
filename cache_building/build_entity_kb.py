@@ -1,23 +1,9 @@
 #!/usr/bin/env python3
 """Build the entity knowledge-base cache used by IScore / popularity scorers.
 
-Historical sources (stitched):
-  1. utils/populate_aida_cache.py — raw claims as QID ints / strings
-  2. utils/process_cache.py — resolve item values to English labels + description
-  3. utils/first_paragraphs.py (+ Embedding calculation.ipynb) — Wikipedia lead
-  4. utils/get_ns_np.py, wd_pagerank.py, wp_pagerank.py — centrality fields
-  5. Embedding calculation.ipynb — early API builder; dump path is canonical
-
-Output (``entity_kb.pkl``; historically ``wikicache.pkl`` / ``ultimate_wikicache.pkl``):
-  {"Q42": {"description": [...], "occupation": [...], "first_paragraph": "...",
+Output ``entity_kb.pkl``:
+  {"Q42": {"description": [...], "P106": [...], "first_paragraph": "...",
            "n_sitelinks": [...], "n_statements": [...], "pagerank": [...], ...}}
-
-Usage:
-  python cache_building/build_entity_kb.py \\
-      --dump artifacts/cache_build/wikidata_subgraph.json.gz \\
-      --labels-dir artifacts/cache_build/entity_metadata \\
-      --qids artifacts/cache_build/candidate_qids.pkl \\
-      --out artifacts/cache_build/entity_kb.pkl
 """
 
 from __future__ import annotations

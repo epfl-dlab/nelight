@@ -7,6 +7,14 @@
     "arxiv": "https://arxiv.org/abs/2207.02824",
     "pdf_local": "paper/culjak-etal-2022-strong.pdf"
   },
+  "pdf_typos": [
+    {"where": "Table 2 NIScore QUOTEBANK overall", "printed": 0.851, "correct": 0.898, "why": "(0.966*203 + 0.571*42)/245"},
+    {"where": "Table 2 NIScore AIDA-CoNLL overall", "printed": 0.562, "correct": 0.589},
+    {"where": "Table 2 Eigen AIDA easy", "printed": 0.859, "correct": 0.858, "note": "overall cell is exact"},
+    {"where": "Table 9 UIScore+PRWP", "printed": 0.942, "correct": 0.943, "note": "same as Table 2 UIScore overall"},
+    {"where": "Table 8/11 AIDA mGENRE MRR (t=256 hard/overall)", "printed": [0.720, 0.730], "correct": [0.743, 0.736]},
+    {"where": "Table 11 AIDA CSE, EEIScore, CSSVE, UCSE, NIScore MRR", "printed": "scrambled vs Table 2 ranking", "correct": "use Table 2 scores; EEIScore printed MRR < P@1"}
+  ],
   "table1_dataset_stats": {
     "description": "Number of mentions in difficulty categories",
     "rows": [

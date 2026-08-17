@@ -24,11 +24,7 @@ run python scripts/run_heuristics.py --dataset both --with-embeddings
 echo "=== 3. IScore ablation (Table 6) ==="
 run python scripts/run_iscore_ablation.py
 
-echo "=== 4. mGENRE dumps + Eigen pickles → ranked_scores ==="
-run python scripts/convert_mgenre_raw.py
-run python scripts/merge_paper_scores.py
-
-echo "=== 5. Tables 1–11 ==="
+echo "=== 4. Tables 1–11 (merges shipped Eigen/mGENRE) ==="
 run python scripts/reproduce_all_paper_tables.py
 
 echo "=== Done → artifacts/all_paper_tables.json ==="

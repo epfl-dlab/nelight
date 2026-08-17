@@ -1,26 +1,7 @@
 #!/usr/bin/env python3
-"""Build BART text embeddings for entities, documents, and mention contexts.
+"""Build BART (``facebook/bart-base``) embeddings for entities, documents, mentions.
 
-Historical sources:
-  - utils/wikidata_embeddings.py   → entity_embeddings
-  - utils/content_embeddings.py    → document_embeddings
-  - utils/sentence_embeddings.py   → mention_embeddings
-
-Uses ``facebook/bart-base``. Entity caches store mask-mean-pooled vectors
-``[n_values, 1, H]`` (scorers already mean over the token axis).
-
-Usage:
-  python cache_building/build_text_embeddings.py entity \\
-      --entity-kb caches/aida/entity_kb.pkl \\
-      --out caches/aida/entity_embeddings.pkl
-
-  python cache_building/build_text_embeddings.py document \\
-      --data data/AIDA/data.json \\
-      --out caches/aida/document_embeddings.pkl
-
-  python cache_building/build_text_embeddings.py mention \\
-      --data data/AIDA/data.json \\
-      --out caches/aida/mention_embeddings.pkl
+Entity caches store mask-mean-pooled vectors ``[n_values, 1, H]``.
 """
 
 from __future__ import annotations

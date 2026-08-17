@@ -1,17 +1,8 @@
 #!/usr/bin/env python3
 """Build the unambiguous-mentions cache used by EEIScore / CSSVE.
 
-Historical source: utils/unambiguous_entities.py
-
-Format (critical for EEIScore):
-  {articleID: [[qid], [qid], …]}  # one singleton list per unambiguous mention
-
-The scorer reads ``cache[aid][0]`` (first unambiguous mention only).
-
-Usage:
-  python cache_building/build_unambiguous_mentions.py \\
-      --data data/Quotebank/data.json \\
-      --out artifacts/cache_build/unambiguous_mentions_quotebank.pkl
+Format: ``{articleID: [[qid], [qid], …]}``. The published scorer reads
+``cache[aid][0]`` (first unambiguous mention only; see REPRODUCIBILITY.md).
 """
 
 from __future__ import annotations

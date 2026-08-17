@@ -9,6 +9,20 @@ from pathlib import Path
 import numpy as np
 import scipy.stats as ss
 
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def data_dir(dataset: str) -> Path:
+    return ROOT / ("data/Quotebank" if dataset == "quotebank" else "data/AIDA")
+
+
+def load_articles(dataset: str):
+    return load_json(data_dir(dataset) / "data.json")
+
+
+def load_gt(dataset: str, split: str):
+    return load_json(data_dir(dataset) / f"{split}.json")
+
 
 def load_json(path: Path):
     with open(path) as f:
@@ -109,14 +123,6 @@ def assign_unambiguous(scores: dict, data: list) -> dict:
 
 def flatten_gt(gt: dict):
     return [(aid, name.lower(), gold) for aid, names in gt.items() for name, gold in names.items()]
-
-
-def merge_gt(*gts: dict) -> dict:
-    out = {}
-    for gt in gts:
-        for aid, names in gt.items():
-            out.setdefault(aid, {}).update({n.lower(): g for n, g in names.items()})
-    return out
 
 
 def precision_at_one_qb(gt_items, scores) -> float:

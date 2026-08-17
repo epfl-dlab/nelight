@@ -1,15 +1,5 @@
 #!/usr/bin/env python3
-"""Collect candidate QIDs from NELight dataset JSON files.
-
-Historical sources:
-  - speaker-disambiguation-quotebank/QB_disamb.ipynb (Spark → qids_for_cache.pkl)
-  - utils/populate_aida_cache.py
-
-Usage:
-  python cache_building/collect_candidate_qids.py \\
-      --data data/Quotebank/data.json \\
-      --out artifacts/cache_build/candidate_qids.pkl
-"""
+"""Collect candidate QIDs from NELight dataset JSON files."""
 
 from __future__ import annotations
 
